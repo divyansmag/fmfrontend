@@ -39,6 +39,19 @@ export default function LabRenderer({ manifest }) {
           </ul>
         </div>
       )}
+
+      {/* Local IDE Embed */}
+      <div className="pt-4 border-t border-slate-100 dark:border-slate-700 space-y-3">
+        <div className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">Local IDE Workspace</div>
+        <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+          <iframe
+            src={data.ideUrl || "https://replit.com/@replit/Python?embed=true"}
+            title="Local IDE Sandbox"
+            className="w-full min-h-[500px] border-0"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        </div>
+      </div>
     </article>
   );
 }

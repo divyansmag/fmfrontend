@@ -1,19 +1,52 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   INITIAL_AI_TUTOR,
-  INITIAL_CHAPTERS,
   INITIAL_USER,
   INITIAL_VIDEO,
   generateOwlReply,
 } from '../data/initialState';
+import {
+  loadCourseData,
+  saveCourseData,
+  getSortedChapters,
+  getSortedUnits,
+  getSortedSubtopics,
+  getSortedAssets,
+  findChapter,
+  findUnit,
+  findSubtopic,
+  findAsset,
+  getFirstAsset,
+  countSubtopicAssets,
+  countUnitAssets,
+  countChapterAssets,
+} from '../data/courseData';
 
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [user, setUser] = useState(INITIAL_USER);
-  const [currentView, setCurrentView] = useState('student-login');
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('futureminds_user_v1');
+      return saved ? JSON.parse(saved) : INITIAL_USER;
+    } catch {
+      return INITIAL_USER;
+    }
+  });
+  const [currentView, setCurrentView] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view')) {
+        const view = params.get('view');
+        window.history.replaceState({}, '', window.location.pathname);
+        return view;
+      }
+      const saved = localStorage.getItem('futureminds_view_v1');
+      if (saved && saved !== 'student-login' && saved !== 'role-select') return saved;
+    } catch {}
+    return 'role-select';
+  });
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [chapters] = useState(INITIAL_CHAPTERS);
   const [video, setVideo] = useState(INITIAL_VIDEO);
   const [aiTutor, setAiTutor] = useState(INITIAL_AI_TUTOR);
   const [toasts, setToasts] = useState([]);
@@ -22,13 +55,149 @@ export function AppProvider({ children }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [chapterModalOpen, setChapterModalOpen] = useState(false);
-  const [selectedChapterId, setSelectedChapterId] = useState(1);
   const [aiSearchQuery, setAiSearchQuery] = useState('');
   const [aiInput, setAiInput] = useState('');
   const [discussionInput, setDiscussionInput] = useState('');
   const toastSeq = useRef(0);
   const typingRef = useRef(false);
 
+  // ─── Save User & View Session ────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      localStorage.setItem('futureminds_user_v1', JSON.stringify(user));
+    } catch { /* ignore quota */ }
+  }, [user]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('futureminds_view_v1', currentView);
+    } catch { /* ignore quota */ }
+  }, [currentView]);
+
+  // ─── Course State ────────────────────────────────────────────────────────
+  const [courseData, setCourseDataState] = useState(() => loadCourseData());
+  const [currentChapterId, setCurrentChapterId] = useState(() => {
+    const d = loadCourseData();
+    return d.chapters[0]?.id ?? null;
+  });
+  const [currentUnitId, setCurrentUnitId] = useState(() => {
+    const d = loadCourseData();
+    return d.chapters[0]?.units[0]?.id ?? null;
+  });
+  const [currentSubtopicId, setCurrentSubtopicId] = useState(() => {
+    const d = loadCourseData();
+    return d.chapters[0]?.units[0]?.subtopics[0]?.id ?? null;
+  });
+  const [currentAssetId, setCurrentAssetId] = useState(() => {
+    const d = loadCourseData();
+    return d.chapters[0]?.units[0]?.subtopics[0]?.assets[0]?.id ?? null;
+  });
+  // Modal chapter tab selection (for ChapterModal sidebar)
+  const [selectedChapterId, setSelectedChapterId] = useState(() => {
+    const d = loadCourseData();
+    return d.chapters[0]?.id ?? null;
+  });
+  // Completed asset IDs — persisted per session
+  const [completedAssetIds, setCompletedAssetIds] = useState(() => {
+    try {
+      const raw = localStorage.getItem('futureminds_completed_assets_v1');
+      return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  // ─── Persist completed assets ────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'futureminds_completed_assets_v1',
+        JSON.stringify([...completedAssetIds])
+      );
+    } catch { /* ignore quota */ }
+  }, [completedAssetIds]);
+
+  // ─── Derived course objects ───────────────────────────────────────────────
+  const chapters = useMemo(() => getSortedChapters(courseData), [courseData]);
+
+  const currentChapter = useMemo(
+    () => findChapter(courseData, currentChapterId),
+    [courseData, currentChapterId]
+  );
+  const currentUnit = useMemo(
+    () => findUnit(currentChapter, currentUnitId),
+    [currentChapter, currentUnitId]
+  );
+  const currentSubtopic = useMemo(
+    () => findSubtopic(currentUnit, currentSubtopicId),
+    [currentUnit, currentSubtopicId]
+  );
+  const currentAsset = useMemo(
+    () => findAsset(currentSubtopic, currentAssetId),
+    [currentSubtopic, currentAssetId]
+  );
+
+  const selectedChapter = useMemo(
+    () => findChapter(courseData, selectedChapterId) || courseData.chapters[0],
+    [courseData, selectedChapterId]
+  );
+
+  // ─── Progress helpers ────────────────────────────────────────────────────
+  const getAssetCompleted = useCallback(
+    (assetId) => completedAssetIds.has(assetId),
+    [completedAssetIds]
+  );
+
+  const getSubtopicProgress = useCallback(
+    (subtopic) => {
+      if (!subtopic?.assets?.length) return { completed: 0, total: 0, pct: 0 };
+      const total = subtopic.assets.length;
+      const completed = subtopic.assets.filter((a) => completedAssetIds.has(a.id)).length;
+      return { completed, total, pct: Math.round((completed / total) * 100) };
+    },
+    [completedAssetIds]
+  );
+
+  const getUnitProgress = useCallback(
+    (unit) => {
+      const total = countUnitAssets(unit);
+      if (!total) return { completed: 0, total: 0, pct: 0 };
+      let completed = 0;
+      for (const subtopic of unit.subtopics ?? []) {
+        for (const asset of subtopic.assets ?? []) {
+          if (completedAssetIds.has(asset.id)) completed++;
+        }
+      }
+      return { completed, total, pct: Math.round((completed / total) * 100) };
+    },
+    [completedAssetIds]
+  );
+
+  const getChapterProgress = useCallback(
+    (chapter) => {
+      const total = countChapterAssets(chapter);
+      if (!total) return { completed: 0, total: 0, pct: 0 };
+      let completed = 0;
+      for (const unit of chapter.units ?? []) {
+        for (const subtopic of unit.subtopics ?? []) {
+          for (const asset of subtopic.assets ?? []) {
+            if (completedAssetIds.has(asset.id)) completed++;
+          }
+        }
+      }
+      return { completed, total, pct: Math.round((completed / total) * 100) };
+    },
+    [completedAssetIds]
+  );
+
+  // ─── CMS: update course data ─────────────────────────────────────────────
+  const updateCourseData = useCallback((newDataOrUpdater) => {
+    setCourseDataState((prev) => {
+      const next = typeof newDataOrUpdater === 'function' ? newDataOrUpdater(prev) : newDataOrUpdater;
+      saveCourseData(next);
+      return next;
+    });
+  }, []);
+
+  // ─── Navigation ─────────────────────────────────────────────────────────
   const showToast = useCallback((title, message, icon = 'info') => {
     const id = ++toastSeq.current;
     setToasts((prev) => [...prev, { id, title, message, icon }]);
@@ -53,6 +222,82 @@ export function AppProvider({ children }) {
     setMobileSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [closeAllModals]);
+
+  /** Navigate to a specific asset in the VideoLesson view */
+  const navigateToAsset = useCallback((chapterId, unitId, subtopicId, assetId) => {
+    setCurrentChapterId(chapterId);
+    setCurrentUnitId(unitId);
+    setCurrentSubtopicId(subtopicId);
+    setCurrentAssetId(assetId);
+    closeAllModals();
+    setMobileSidebarOpen(false);
+    setCurrentView('video');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [closeAllModals]);
+
+  /** Mark current asset complete and award XP */
+  const markAssetComplete = useCallback((assetId) => {
+    if (completedAssetIds.has(assetId)) return;
+    setCompletedAssetIds((prev) => new Set([...prev, assetId]));
+    addXP(20, 'Completed a lesson asset');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completedAssetIds]);
+
+  /** Navigate to adjacent asset within the lesson panel */
+  const navigateAdjacentAsset = useCallback((direction) => {
+    if (!currentChapter || !currentUnit || !currentSubtopic || !currentAsset) return;
+
+    const sortedAssets = getSortedAssets(currentSubtopic);
+    const assetIndex = sortedAssets.findIndex((a) => a.id === currentAssetId);
+
+    if (direction === 'next') {
+      if (assetIndex < sortedAssets.length - 1) {
+        setCurrentAssetId(sortedAssets[assetIndex + 1].id);
+        return;
+      }
+      // Try next subtopic
+      const subtopics = getSortedSubtopics(currentUnit);
+      const subtopicIndex = subtopics.findIndex((s) => s.id === currentSubtopicId);
+      if (subtopicIndex < subtopics.length - 1) {
+        const nextSubtopic = subtopics[subtopicIndex + 1];
+        const nextAssets = getSortedAssets(nextSubtopic);
+        if (nextAssets.length) {
+          setCurrentSubtopicId(nextSubtopic.id);
+          setCurrentAssetId(nextAssets[0].id);
+        }
+        return;
+      }
+      // Try next unit
+      const units = getSortedUnits(currentChapter);
+      const unitIndex = units.findIndex((u) => u.id === currentUnitId);
+      if (unitIndex < units.length - 1) {
+        const nextUnit = units[unitIndex + 1];
+        const nextSub = getSortedSubtopics(nextUnit)[0];
+        const nextAsset = nextSub ? getSortedAssets(nextSub)[0] : null;
+        if (nextUnit && nextSub && nextAsset) {
+          setCurrentUnitId(nextUnit.id);
+          setCurrentSubtopicId(nextSub.id);
+          setCurrentAssetId(nextAsset.id);
+        }
+      }
+    } else {
+      if (assetIndex > 0) {
+        setCurrentAssetId(sortedAssets[assetIndex - 1].id);
+        return;
+      }
+      // Try previous subtopic
+      const subtopics = getSortedSubtopics(currentUnit);
+      const subtopicIndex = subtopics.findIndex((s) => s.id === currentSubtopicId);
+      if (subtopicIndex > 0) {
+        const prevSubtopic = subtopics[subtopicIndex - 1];
+        const prevAssets = getSortedAssets(prevSubtopic);
+        if (prevAssets.length) {
+          setCurrentSubtopicId(prevSubtopic.id);
+          setCurrentAssetId(prevAssets[prevAssets.length - 1].id);
+        }
+      }
+    }
+  }, [currentChapter, currentUnit, currentSubtopic, currentAsset, currentAssetId, currentSubtopicId, currentUnitId]);
 
   const applyTheme = useCallback((theme) => {
     const root = document.documentElement;
@@ -136,10 +381,10 @@ export function AppProvider({ children }) {
     });
   }, []);
 
-  const openChapterModal = useCallback((chapterId = 1) => {
-    setSelectedChapterId(chapterId);
+  const openChapterModal = useCallback((chapterId) => {
+    setSelectedChapterId(chapterId ?? courseData.chapters[0]?.id);
     setChapterModalOpen(true);
-  }, []);
+  }, [courseData]);
 
   const closeChapterModal = useCallback(() => {
     setChapterModalOpen(false);
@@ -149,18 +394,51 @@ export function AppProvider({ children }) {
     setSelectedChapterId(chapterId);
   }, []);
 
-  const launchLesson = useCallback((type, title) => {
-    closeChapterModal();
-    if (type === 'VIDEO' || type === 'LAB' || type === 'QUIZ') {
-      navigateTo('video');
-      showToast('Lesson Loaded', `Now playing: ${title}`, 'success');
+  /** Launch a lesson — can accept an asset reference or legacy (type, title) call */
+  const launchLesson = useCallback((chapterIdOrType, unitIdOrTitle, subtopicId, assetId) => {
+    // Legacy call from old code: launchLesson('VIDEO', 'title')
+    if (typeof chapterIdOrType === 'string' && !unitIdOrTitle?.startsWith('ch')) {
+      const first = getFirstAsset(courseData, courseData.chapters[0]?.id);
+      if (first) {
+        navigateToAsset(first.chapterId, first.unitId, first.subtopicId, first.assetId);
+      } else {
+        navigateTo('video');
+      }
+      return;
     }
-  }, [closeChapterModal, navigateTo, showToast]);
+    navigateToAsset(chapterIdOrType, unitIdOrTitle, subtopicId, assetId);
+  }, [courseData, navigateToAsset, navigateTo]);
 
   const addXP = useCallback((amount, reason = 'Completed Activity') => {
     setUser((prev) => ({ ...prev, xp: prev.xp + amount }));
     showToast(`+${amount} XP Earned!`, reason, 'star');
   }, [showToast]);
+
+  // Make markAssetComplete reference addXP correctly (define after addXP)
+  const markAssetCompleteFinal = useCallback((assetId) => {
+    const id = assetId ?? currentAssetId;
+    if (!id || completedAssetIds.has(id)) return;
+    setCompletedAssetIds((prev) => new Set([...prev, id]));
+    setUser((prev) => ({ ...prev, xp: prev.xp + 20 }));
+    showToast('+20 XP Earned!', 'Asset marked as complete!', 'star');
+  }, [completedAssetIds, currentAssetId, showToast]);
+
+  const toggleAssetComplete = useCallback((assetId) => {
+    const id = assetId ?? currentAssetId;
+    if (!id) return;
+    setCompletedAssetIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        showToast('Marked Incomplete', 'Asset completion status updated.', 'info');
+      } else {
+        next.add(id);
+        setUser((prevUser) => ({ ...prevUser, xp: prevUser.xp + 20 }));
+        showToast('+20 XP Earned!', 'Asset marked as complete!', 'star');
+      }
+      return next;
+    });
+  }, [currentAssetId, showToast]);
 
   const redeemReward = useCallback((rewardType, cost) => {
     setUser((prev) => {
@@ -187,10 +465,10 @@ export function AppProvider({ children }) {
   const toggleVideoPlay = useCallback(() => {
     setVideo((prev) => {
       const isPlaying = !prev.isPlaying;
-      showToast(isPlaying ? 'Playing Lesson' : 'Paused', 'Neural Foundations: Neural Basics', 'info');
+      showToast(isPlaying ? 'Playing Lesson' : 'Paused', currentAsset?.title || 'Lesson', 'info');
       return { ...prev, isPlaying };
     });
-  }, [showToast]);
+  }, [showToast, currentAsset]);
 
   const switchVideoTab = useCallback((tabName) => {
     setVideo((prev) => ({ ...prev, activeTab: tabName }));
@@ -360,11 +638,6 @@ export function AppProvider({ children }) {
     return currentView;
   }, [currentView]);
 
-  const selectedChapter = useMemo(
-    () => chapters.find((chapter) => chapter.id === selectedChapterId) || chapters[0],
-    [chapters, selectedChapterId]
-  );
-
   const currentSession = useMemo(
     () => aiTutor.sessions.find((session) => session.id === aiTutor.currentSessionId) || aiTutor.sessions[0],
     [aiTutor]
@@ -382,10 +655,10 @@ export function AppProvider({ children }) {
 
   const value = useMemo(
     () => ({
+      // ── User & UI ───────────────────────────────────────
       user,
       currentView,
       currentTheme,
-      chapters,
       video,
       aiTutor,
       toasts,
@@ -394,8 +667,6 @@ export function AppProvider({ children }) {
       profileOpen,
       notifOpen,
       chapterModalOpen,
-      selectedChapterId,
-      selectedChapter,
       aiSearchQuery,
       setAiSearchQuery,
       aiInput,
@@ -405,7 +676,34 @@ export function AppProvider({ children }) {
       navKey,
       currentSession,
       filteredSessions,
+      // ── Course Data ────────────────────────────────────
+      courseData,
+      chapters,
+      updateCourseData,
+      // ── Current Position ──────────────────────────────
+      currentChapterId,
+      currentUnitId,
+      currentSubtopicId,
+      currentAssetId,
+      currentChapter,
+      currentUnit,
+      currentSubtopic,
+      currentAsset,
+      // ── Modal Chapter Selection ────────────────────────
+      selectedChapterId,
+      selectedChapter,
+      // ── Progress ──────────────────────────────────────
+      completedAssetIds,
+      getAssetCompleted,
+      getSubtopicProgress,
+      getUnitProgress,
+      getChapterProgress,
+      markAssetComplete: markAssetCompleteFinal,
+      toggleAssetComplete,
+      // ── Navigation Actions ────────────────────────────
       navigateTo,
+      navigateToAsset,
+      navigateAdjacentAsset,
       showToast,
       setTheme,
       toggleTheme,
@@ -437,55 +735,26 @@ export function AppProvider({ children }) {
       sendAiMessage,
     }),
     [
-      user,
-      currentView,
-      currentTheme,
-      chapters,
-      video,
-      aiTutor,
-      toasts,
-      sidebarCollapsed,
-      mobileSidebarOpen,
-      profileOpen,
-      notifOpen,
-      chapterModalOpen,
-      selectedChapterId,
-      selectedChapter,
-      aiSearchQuery,
-      aiInput,
-      discussionInput,
-      navKey,
-      currentSession,
-      filteredSessions,
-      navigateTo,
-      showToast,
-      setTheme,
-      toggleTheme,
-      handleLogin,
-      handleLogout,
-      toggleSidebar,
-      closeMobileSidebar,
-      toggleProfileDropdown,
-      toggleNotificationDropdown,
-      closeDropdowns,
-      closeAllModals,
-      openChapterModal,
-      closeChapterModal,
-      selectModalChapter,
-      launchLesson,
-      addXP,
-      redeemReward,
-      toggleVideoPlay,
-      switchVideoTab,
-      saveVideoNote,
-      postDiscussionReply,
-      selectChatSession,
-      createNewSession,
-      deleteChatSession,
-      clearCurrentChat,
-      clearAllChatSessions,
-      deleteChatMessage,
-      sendAiMessage,
+      user, currentView, currentTheme, video, aiTutor, toasts,
+      sidebarCollapsed, mobileSidebarOpen, profileOpen, notifOpen, chapterModalOpen,
+      aiSearchQuery, aiInput, discussionInput, navKey, currentSession, filteredSessions,
+      courseData, chapters, updateCourseData,
+      currentChapterId, currentUnitId, currentSubtopicId, currentAssetId,
+      currentChapter, currentUnit, currentSubtopic, currentAsset,
+      selectedChapterId, selectedChapter,
+      completedAssetIds, getAssetCompleted, getSubtopicProgress, getUnitProgress, getChapterProgress,
+      markAssetCompleteFinal, toggleAssetComplete,
+      navigateTo, navigateToAsset, navigateAdjacentAsset,
+      showToast, setTheme, toggleTheme,
+      handleLogin, handleLogout, toggleSidebar, closeMobileSidebar,
+      toggleProfileDropdown, toggleNotificationDropdown,
+      closeDropdowns, closeAllModals,
+      openChapterModal, closeChapterModal, selectModalChapter,
+      launchLesson, addXP, redeemReward,
+      toggleVideoPlay, switchVideoTab, saveVideoNote,
+      postDiscussionReply, selectChatSession, createNewSession,
+      deleteChatSession, clearCurrentChat, clearAllChatSessions,
+      deleteChatMessage, sendAiMessage,
     ]
   );
 

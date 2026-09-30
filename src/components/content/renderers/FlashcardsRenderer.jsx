@@ -30,8 +30,8 @@ export default function FlashcardsRenderer({ manifest }) {
         <p className="text-sm text-slate-400">This deck has no cards yet.</p>
       ) : (
         <>
-          <button type="button" onClick={() => setFlipped((value) => !value)} className="w-full [perspective:1200px]">
-            <div className={`flashcard-inner ${flipped ? 'is-flipped' : ''}`}>
+          <button type="button" onClick={() => setFlipped((value) => !value)} className="w-full [perspective:1200px] min-h-[180px]">
+            <div className={`flashcard-inner w-full h-full min-h-[180px] ${flipped ? 'is-flipped' : ''}`}>
               <div className="flashcard-face bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50 rounded-2xl p-8 min-h-[180px] flex flex-col items-center justify-center">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-500 mb-2">Question</span>
                 <p className="text-base font-semibold text-slate-900 dark:text-white text-center">{card.front}</p>

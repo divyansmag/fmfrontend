@@ -5,6 +5,7 @@ import LabRenderer from './renderers/LabRenderer.jsx';
 import HtmlEmbedRenderer from './renderers/HtmlEmbedRenderer.jsx';
 import GameRenderer from './renderers/GameRenderer.jsx';
 import SummaryRenderer from './renderers/SummaryRenderer.jsx';
+import QuizRenderer from './renderers/QuizRenderer.jsx';
 import UnsupportedRenderer from './renderers/UnsupportedRenderer.jsx';
 
 /**
@@ -19,6 +20,7 @@ export const CONTENT_RENDERERS = {
   html_embed: HtmlEmbedRenderer,
   game: GameRenderer,
   summary: SummaryRenderer,
+  quiz: QuizRenderer,
 };
 
 export function getRenderer(type) {

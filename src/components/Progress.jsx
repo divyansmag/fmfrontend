@@ -24,9 +24,9 @@ const BADGES = [
 const LEADERBOARD_TABS = ['Global', 'Class', 'Friends'];
 
 const LEADERBOARD = [
-  { rank: 1, initials: 'AS', name: 'Arjun S.', level: 'Lvl 15', xp: '12,400 XP', style: 'first' },
-  { rank: 2, initials: 'PV', name: 'Priya V.', level: 'Lvl 14', xp: '11,800 XP' },
-  { rank: 3, initials: 'IM', name: 'Ishaan M.', level: 'Lvl 13', xp: '11,280 XP', bronze: true },
+  { rank: 1, initials: 'AS', name: 'Arjun S.', level: 'Lvl 15', xp: '12,400 XP', style: 'first', avatar: '/assets/avatar1.jpg' },
+  { rank: 2, initials: 'PV', name: 'Priya V.', level: 'Lvl 14', xp: '11,800 XP', avatar: '/assets/avatar2.jpg' },
+  { rank: 3, initials: 'IM', name: 'Ishaan M.', level: 'Lvl 13', xp: '11,280 XP', bronze: true, avatar: '/assets/avatar3.jpg' },
 ];
 
 export default function Progress() {
@@ -221,9 +221,13 @@ export default function Progress() {
               <div key={row.rank} className={`flex items-center justify-between p-2.5 rounded-2xl ${row.style === 'first' ? 'bg-slate-50 dark:bg-slate-700/40' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs font-black w-4 text-center ${row.rank === 1 ? 'text-amber-500' : row.bronze ? 'text-amber-700' : 'text-slate-400'}`}>{row.rank}</span>
-                  <div className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center ${row.rank === 1 ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300' : row.bronze ? 'bg-amber-50 dark:bg-amber-950 text-amber-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
-                    {row.initials}
-                  </div>
+                  {row.avatar ? (
+                    <img src={row.avatar} alt={row.name} className={`w-8 h-8 rounded-full object-cover shadow-sm ${row.rank === 1 ? 'ring-2 ring-amber-400 ring-offset-1 p-[1px]' : ''}`} />
+                  ) : (
+                    <div className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center ${row.rank === 1 ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300' : row.bronze ? 'bg-amber-50 dark:bg-amber-950 text-amber-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                      {row.initials}
+                    </div>
+                  )}
                   <div>
                     <div className={`text-xs ${row.rank === 1 ? 'font-bold' : 'font-semibold'} text-slate-800 dark:text-slate-200`}>{row.name}</div>
                     <div className="text-[10px] text-slate-400">{row.level}</div>

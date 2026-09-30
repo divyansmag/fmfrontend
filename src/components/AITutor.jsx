@@ -69,11 +69,10 @@ export default function AITutor() {
                     return (
                       <div
                         key={session.id}
-                        className={`group relative flex items-center justify-between rounded-xl transition-all ${
-                          isActive
-                            ? 'bg-purple-600 text-white font-semibold shadow-sm'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-800'
-                        }`}
+                        className={`group relative flex items-center justify-between rounded-xl transition-all ${isActive
+                          ? 'bg-purple-600 text-white font-semibold shadow-sm'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-800'
+                          }`}
                       >
                         <button type="button" onClick={() => selectChatSession(session.id)} className="flex-1 text-left px-3 py-2.5 text-xs flex items-center gap-2 truncate cursor-pointer">
                           <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 opacity-75" />
@@ -102,7 +101,7 @@ export default function AITutor() {
               <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
                 <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center overflow-hidden shadow-inner">
                   <img
-                    src="/dist/assets/orin.jpeg"
+                    src="/assets/sage_aitutor.jpg"
                     alt="Orin"
                     className="w-full h-full object-cover"
                   />
@@ -130,7 +129,7 @@ export default function AITutor() {
                   <div key={`${message.sender}-${index}`} className="group relative flex items-start gap-3.5 max-w-2xl">
                     <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
                       <img
-                        src="/dist/assets/orin.jpeg"
+                        src="dist\assets\orin_aitutor.jpg"
                         alt="Orin"
                         className="w-full h-full object-cover"
                       />
@@ -155,7 +154,7 @@ export default function AITutor() {
               <div id="ai-typing-indicator" className="flex items-start gap-3.5 max-w-2xl">
                 <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
                   <img
-                    src="/dist/assets/orin.jpeg"
+                    src="/assets/orin.jpeg"
                     alt="Orin"
                     className="w-full h-full object-cover"
                   />

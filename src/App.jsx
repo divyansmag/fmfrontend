@@ -4,7 +4,7 @@ import Toast from './components/Toast.jsx';
 import AuthHeader from './components/AuthHeader.jsx';
 import AuthFooter from './components/AuthFooter.jsx';
 import RoleSelect from './components/RoleSelect.jsx';
-import StudentLogin from './components/StudentLogin.jsx';
+import AuthLogin from './components/AuthLogin.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -15,8 +15,9 @@ import AITutor from './components/AITutor.jsx';
 import Progress from './components/Progress.jsx';
 import Settings from './components/Settings.jsx';
 import ChapterModal from './components/ChapterModal.jsx';
+import CMS from './components/CMS.jsx';
 
-const AUTH_VIEWS = ['student-login', 'role-select'];
+const AUTH_VIEWS = ['student-login', 'teacher-login', 'parent-login', 'admin-login', 'role-select'];
 
 export default function App() {
   const { currentTheme, currentView, closeDropdowns } = useApp();
@@ -65,7 +66,7 @@ export default function App() {
           className="min-h-screen flex flex-col justify-between bg-gradient-to-b from-purple-50/60 via-white to-purple-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950/20"
         >
           <AuthHeader />
-          {currentView === 'role-select' ? <RoleSelect /> : <StudentLogin />}
+          {currentView === 'role-select' ? <RoleSelect /> : <AuthLogin />}
           <AuthFooter />
         </div>
       ) : (
@@ -80,6 +81,7 @@ export default function App() {
             {currentView === 'ai-tutor' && <AITutor />}
             {currentView === 'progress' && <Progress />}
             {currentView === 'settings' && <Settings />}
+            {currentView === 'cms' && <CMS />}
           </div>
         </div>
       )}

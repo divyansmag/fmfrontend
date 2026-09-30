@@ -7,8 +7,8 @@ export default function AuthHeader() {
   return (
     <header className="w-full px-6 lg:px-12 py-5 flex items-center justify-between">
       <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigateTo('role-select')}>
-        <img src="dist/assets/fm.png" alt="FutureMinds Logo" className="w-12 h-12 object-contain dark:hidden" />
-        <img src="dist/assets/fmdark.png" alt="FutureMinds Logo Dark" className="w-12 h-12 object-contain hidden dark:block" />
+        <img src="dist\assets\logo.png" alt="FutureMinds Logo" className="w-12 h-12 object-contain dark:hidden" />
+        <img src="dist\assets\logodark.png" alt="FutureMinds Logo Dark" className="w-12 h-12 object-contain hidden dark:block" />
         <span className="text-xl font-extrabold text-purple-700 dark:text-purple-400 font-display tracking-tight">FutureMinds</span>
       </div>
 

@@ -3,38 +3,38 @@ import { useApp } from '../context/AppContext.jsx';
 const ROLES = [
   {
     id: 'student',
-    emoji: '🦉',
+    image: '/assets/lumi_login.gif',
     title: 'Student',
     desc: 'Check your assignments, attend classes, and track your learning progress.',
     border: 'border-purple-100 dark:border-slate-700/60',
-    avatar: 'bg-purple-100 dark:bg-purple-900/30',
+    avatar: 'bg-purple-100 dark:bg-purple-900/30 overflow-hidden',
     button: 'bg-purple-600 shadow-purple-600/30 hover:bg-purple-700',
   },
   {
     id: 'teacher',
-    emoji: '🐢',
+    image: '/assets/sage_login.gif',
     title: 'Teacher',
     desc: 'Manage your curriculum, grade submissions, and interact with your students.',
     border: 'border-emerald-100 dark:border-slate-700/60',
-    avatar: 'bg-emerald-100 dark:bg-emerald-900/30',
+    avatar: 'bg-emerald-100 dark:bg-emerald-900/30 overflow-hidden',
     button: 'bg-emerald-600 shadow-emerald-600/30 hover:bg-emerald-700',
   },
   {
     id: 'parent',
-    emoji: '🐘',
+    image: '/assets/eli.gif',
     title: 'Parent',
     desc: "Stay updated with your child's performance, attendance, and school news.",
     border: 'border-blue-100 dark:border-slate-700/60',
-    avatar: 'bg-blue-100 dark:bg-blue-900/30',
+    avatar: 'bg-blue-100 dark:bg-blue-900/30 overflow-hidden',
     button: 'bg-sky-500 shadow-sky-500/30 hover:bg-sky-600',
   },
   {
     id: 'admin',
-    emoji: '🧙‍♂️',
+    image: '/assets/orin_login.gif',
     title: 'Admin',
     desc: 'Configure institutional settings, manage user accounts, and view analytics.',
     border: 'border-amber-100 dark:border-slate-700/60',
-    avatar: 'bg-amber-100 dark:bg-amber-900/30',
+    avatar: 'bg-amber-100 dark:bg-amber-900/30 overflow-hidden',
     button: 'bg-amber-600 shadow-amber-600/30 hover:bg-amber-700',
   },
 ];
@@ -47,8 +47,7 @@ export default function RoleSelect() {
       navigateTo('student-login');
       return;
     }
-    showToast(`${role.title} Portal`, `${role.title} demo redirects to student dashboard for evaluation`, 'info');
-    navigateTo('dashboard');
+    window.location.href = `http://localhost:5174/login/${role.id}`;
   };
 
   return (
@@ -64,8 +63,8 @@ export default function RoleSelect() {
             key={role.id}
             className={`bg-white dark:bg-slate-800 rounded-3xl p-7 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border ${role.border} flex flex-col items-center text-center relative group`}
           >
-            <div className={`w-24 h-24 rounded-full ${role.avatar} flex items-center justify-center text-5xl mb-5 shadow-inner group-hover:scale-105 transition-transform`}>
-              {role.emoji}
+            <div className={`w-24 h-24 rounded-full ${role.avatar} flex items-center justify-center mb-5 shadow-inner group-hover:scale-105 transition-transform`}>
+              <img src={role.image} alt={role.title} className="w-full h-full object-cover rounded-full" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{role.title}</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6 flex-1">{role.desc}</p>

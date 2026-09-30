@@ -5,18 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently \"vite\" \"cd Teacher_FM-main/Teacher_FM-main && npm run dev\"",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@phosphor-icons/react": "^2.1.10",
+    "localforage": "^1.10.0",
     "lucide-react": "^0.511.0",
+    "lz-string": "^1.5.0",
+    "puppeteer": "^25.12.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^10.0.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "vite": "^6.3.5"

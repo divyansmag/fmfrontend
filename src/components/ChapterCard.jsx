@@ -2,16 +2,12 @@ import { Check, Lock, Play } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 
 export default function ChapterCard({ chapter }) {
-  const { openChapterModal, launchLesson } = useApp();
+  const { openChapterModal } = useApp();
   const isCompleted = chapter.status === 'completed';
   const isActive = chapter.status === 'active';
   const isLocked = chapter.status === 'locked';
 
   const handleClick = () => {
-    if (isActive) {
-      launchLesson('VIDEO', chapter.title);
-      return;
-    }
     openChapterModal(chapter.id);
   };
 
@@ -35,10 +31,10 @@ export default function ChapterCard({ chapter }) {
             type="button"
             onClick={(event) => {
               event.stopPropagation();
-              launchLesson('VIDEO', chapter.title);
+              openChapterModal(chapter.id);
             }}
             className="w-10 h-10 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center shadow-md shadow-purple-600/30 transition-transform hover:scale-110"
-            title="Play Video Lesson"
+            title="Inspect Chapter Structure"
           >
             <Play className="w-5 h-5 fill-current ml-0.5" />
           </button>
