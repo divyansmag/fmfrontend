@@ -547,7 +547,10 @@ export default function CMS() {
   };
 
   // ── Derived selections ────────────────────────────────────────────────────
-  const chapters = getSortedChapters(courseData);
+  const [cmsGrade, setCmsGrade] = useState('6');
+  const allChapters = getSortedChapters(courseData);
+  const chapters = allChapters.filter((c) => (c.grade || '6') === cmsGrade);
+  
   const selectedChapter = chapters.find((c) => c.id === selectedChapterId);
   const units = selectedChapter ? getSortedUnits(selectedChapter) : [];
   const selectedUnit = units.find((u) => u.id === selectedUnitId);
@@ -563,7 +566,9 @@ export default function CMS() {
     if (!newChapterTitle.trim()) return;
     const title = newChapterTitle.trim();
     save((prev) => {
-      const order = prev.chapters.length + 1;
+      // Calculate order based on chapters in the active grade only
+      const gradeChapters = prev.chapters.filter(c => (c.grade || '6') === cmsGrade);
+      const order = gradeChapters.length + 1;
       const newChapter = {
         id: `ch-${nanoid()}`,
         order,
@@ -572,6 +577,7 @@ export default function CMS() {
         status: 'locked',
         tags: [],
         units: [],
+        grade: cmsGrade,
       };
       return { ...prev, chapters: [...prev.chapters, newChapter] };
     });
@@ -595,6 +601,16 @@ export default function CMS() {
 
   const updateChapterStatus = (chapterId, status) => {
     save((prev) => ({ ...prev, chapters: prev.chapters.map((c) => c.id === chapterId ? { ...c, status } : c) }));
+  };
+
+  const updateChapterGrade = (chapterId, grade) => {
+    save((prev) => ({ ...prev, chapters: prev.chapters.map((c) => c.id === chapterId ? { ...c, grade } : c) }));
+    if (selectedChapterId === chapterId && grade !== cmsGrade) {
+      setSelectedChapterId(null);
+      setSelectedUnitId(null);
+      setSelectedSubtopicId(null);
+      setSelectedAssetId(null);
+    }
   };
 
   // ── Unit CRUD ─────────────────────────────────────────────────────────────
@@ -797,7 +813,25 @@ export default function CMS() {
             Changes save instantly and update all learner views automatically.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+            <select
+              value={cmsGrade}
+              onChange={(e) => {
+                setCmsGrade(e.target.value);
+                setSelectedChapterId(null);
+                setSelectedUnitId(null);
+                setSelectedSubtopicId(null);
+                setSelectedAssetId(null);
+              }}
+              className="bg-transparent text-sm font-bold text-slate-900 dark:text-white px-3 py-1 outline-none cursor-pointer"
+            >
+              <option value="6">Grade 6 Content</option>
+              <option value="7">Grade 7 Content</option>
+              <option value="8">Grade 8 Content</option>
+            </select>
+          </div>
+          
           <button
             type="button"
             onClick={handleReset}
@@ -869,11 +903,16 @@ export default function CMS() {
             <div className="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2">
               <label className={labelCls()}>Edit Title</label>
               <input key={selectedChapter.id} type="text" className={inputCls()} defaultValue={selectedChapter.title} onBlur={(e) => updateChapterTitle(selectedChapter.id, e.target.value)} />
-              <label className={labelCls()}>Status</label>
               <select className={inputCls()} value={selectedChapter.status} onChange={(e) => updateChapterStatus(selectedChapter.id, e.target.value)}>
                 <option value="active">active</option>
                 <option value="completed">completed</option>
                 <option value="locked">locked</option>
+              </select>
+              <label className={labelCls()}>Grade</label>
+              <select className={inputCls()} value={selectedChapter.grade || '6'} onChange={(e) => updateChapterGrade(selectedChapter.id, e.target.value)}>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
               </select>
             </div>
           )}

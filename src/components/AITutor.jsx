@@ -101,7 +101,7 @@ export default function AITutor() {
               <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
                 <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center overflow-hidden shadow-inner">
                   <img
-                    src="/assets/sage_aitutor.jpg"
+                    src="dist/assets/orin_aitutor.jpg"
                     alt="Orin"
                     className="w-full h-full object-cover"
                   />
@@ -129,7 +129,7 @@ export default function AITutor() {
                   <div key={`${message.sender}-${index}`} className="group relative flex items-start gap-3.5 max-w-2xl">
                     <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
                       <img
-                        src="dist\assets\orin_aitutor.jpg"
+                        src="dist/assets/orin_aitutor.jpg"
                         alt="Orin"
                         className="w-full h-full object-cover"
                       />

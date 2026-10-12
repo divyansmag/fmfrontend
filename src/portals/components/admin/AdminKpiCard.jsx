@@ -1,0 +1,45 @@
+import React from 'react';
+
+
+
+
+
+
+
+
+
+
+
+export const AdminKpiCard = ({
+  icon: Icon,
+  iconBgColor,
+  iconColor,
+  value,
+  growth,
+  label
+}) => {
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/70 dark:border-slate-700/80 shadow-xs flex flex-col justify-between transition-colors">
+      {/* Top Icon Circle */}
+      <div className={`w-11 h-11 rounded-full ${iconBgColor} flex items-center justify-center flex-shrink-0 mb-4`}>
+        <Icon className={`w-5 h-5 ${iconColor} stroke-[2.2]`} />
+      </div>
+
+      {/* Main Content */}
+      <div>
+        <div className="text-4xl font-extrabold font-display text-gray-900 dark:text-white tracking-tight">
+          {typeof value === 'number' ? value.toLocaleString() : value}
+        </div>
+
+        <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1.5 flex items-center space-x-1">
+          <span>↑{growth}%</span>
+          <span className="text-gray-500 dark:text-gray-400 font-medium">this month</span>
+        </div>
+
+        <div className="text-[11px] font-bold tracking-wider text-gray-400 dark:text-gray-500 uppercase mt-1">
+          {label}
+        </div>
+      </div>
+    </div>);
+
+};

@@ -37,8 +37,7 @@ export default function Sidebar() {
         <div>
           <div className="flex items-center justify-between px-2 py-2 mb-6">
             <div className="flex items-center gap-3 cursor-pointer overflow-hidden" onClick={() => navigateTo('dashboard')}>
-              <img src="dist\assets\logo.png" alt="FutureMinds Logo" className="w-10 h-10 object-contain flex-shrink-0 dark:hidden" />
-              <img src="dist\assets\logodark.png" alt="FutureMinds Logo Dark" className="w-10 h-10 object-contain flex-shrink-0 hidden dark:block" />
+              <img src="dist/assets/logo.png" alt="FutureMinds Logo" className="w-10 h-10 object-contain flex-shrink-0" />
               <div className="sidebar-brand-text">
                 <div className="text-lg font-extrabold text-purple-700 dark:text-purple-400 font-display leading-tight">FutureMinds</div>
                 <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">MYAIGURU</div>

@@ -13,26 +13,29 @@ export default function AuthLogin() {
     student: {
       title: 'Student',
       placeholder: 'Email / Student ID',
-      image: '/assets/lumi_login.gif',
+      image: '/dist/assets/lumi_login.gif',
       theme: 'purple',
     },
     teacher: {
       title: 'Teacher',
       placeholder: 'Email / Teacher ID',
-      image: '/assets/sage_aitutor.jpg',
+      image: '/dist/assets/sage_login.gif',
       theme: 'emerald',
+      imgClass: 'scale-[1.65] origin-[50%_30%]',
     },
     parent: {
       title: 'Parent',
       placeholder: 'Email / Phone Number',
-      image: '/assets/eli.gif',
+      image: '/dist/assets/eli_login.gif',
       theme: 'blue',
+      imgClass: '',
     },
     admin: {
       title: 'Admin',
       placeholder: 'Admin Email',
-      image: '/assets/orin_aitutor.jpg',
+      image: '/dist/assets/orin_login.gif',
       theme: 'amber',
+      imgClass: '-scale-x-100',
     }
   };
   
@@ -82,12 +85,7 @@ export default function AuthLogin() {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (roleId === 'student') {
-      handleLogin(event, email);
-    } else {
-      // Redirect to external portal for other roles
-      window.location.href = `http://localhost:5174/login/${roleId}`;
-    }
+    handleLogin(event, email, roleId);
   };
 
   return (
@@ -97,7 +95,7 @@ export default function AuthLogin() {
           <img
             src={config.image}
             alt={`${config.title} Mascot`}
-            className="w-full h-full object-cover rounded-full bg-white dark:bg-slate-800"
+            className={`w-full h-full object-cover rounded-full bg-white dark:bg-slate-800 ${config.imgClass || ''}`}
           />
         </div>
 

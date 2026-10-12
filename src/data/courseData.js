@@ -132,6 +132,7 @@ export const COURSE_DATA = {
     {
       id: 'ch1',
       order: 1,
+      grade: '6',
       number: '01',
       title: 'Introduction to AI',
       status: 'active', // 'completed' | 'active' | 'locked'
@@ -141,17 +142,20 @@ export const COURSE_DATA = {
         {
           id: 'ch1-u1',
           order: 1,
+      grade: '6',
           title: 'Understanding AI',
           subtopics: [
             // ── Subtopic 1.1.1 ────────────────────
             {
               id: 'ch1-u1-s1',
               order: 1,
+      grade: '6',
               title: 'What is AI?',
               assets: [
                 {
                   id: 'ch1-u1-s1-a1',
                   order: 1,
+      grade: '6',
                   title: 'What is Artificial Intelligence?',
                   type: 'video',
                   data: {
@@ -162,6 +166,7 @@ export const COURSE_DATA = {
                 {
                   id: 'ch1-u1-s1-a2',
                   order: 2,
+      grade: '6',
                   title: 'AI Explained — Summary',
                   type: 'summary',
                   data: {
@@ -198,6 +203,7 @@ Three forces converged to make modern AI possible:
                 {
                   id: 'ch1-u1-s1-a3',
                   order: 3,
+      grade: '6',
                   title: 'The AI Landscape — Mindmap',
                   type: 'mindmap',
                   data: {
@@ -279,11 +285,13 @@ Three forces converged to make modern AI possible:
             {
               id: 'ch1-u1-s2',
               order: 2,
+      grade: '6',
               title: 'AI in Everyday Life',
               assets: [
                 {
                   id: 'ch1-u1-s2-a1',
                   order: 1,
+      grade: '6',
                   title: 'AI Around You — Video',
                   type: 'video',
                   data: {
@@ -294,6 +302,7 @@ Three forces converged to make modern AI possible:
                 {
                   id: 'ch1-u1-s2-a2',
                   order: 2,
+      grade: '6',
                   title: 'Prompt Builder Challenge',
                   type: 'game',
                   data: {
@@ -304,6 +313,7 @@ Three forces converged to make modern AI possible:
                 {
                   id: 'ch1-u1-s2-a3',
                   order: 3,
+      grade: '6',
                   title: 'AI Applications — Flashcards',
                   type: 'flashcards',
                   data: {
@@ -324,16 +334,19 @@ Three forces converged to make modern AI possible:
         {
           id: 'ch1-u2',
           order: 2,
+      grade: '6',
           title: 'How AI Learns',
           subtopics: [
             {
               id: 'ch1-u2-s1',
               order: 1,
+      grade: '6',
               title: 'Data and Learning',
               assets: [
                 {
                   id: 'ch1-u2-s1-a1',
                   order: 1,
+      grade: '6',
                   title: 'How Machines Learn from Data',
                   type: 'video',
                   data: {
@@ -344,6 +357,7 @@ Three forces converged to make modern AI possible:
                 {
                   id: 'ch1-u2-s1-a2',
                   order: 2,
+      grade: '6',
                   title: 'Training Data & Bias — Summary',
                   type: 'summary',
                   data: {
@@ -388,6 +402,7 @@ If training data is biased:
                 {
                   id: 'ch1-u2-s1-a3',
                   order: 3,
+      grade: '6',
                   title: 'Data Science Lab — Explore a Dataset',
                   type: 'lab',
                   data: {
@@ -443,6 +458,7 @@ print(df.dtypes)
     {
       id: 'ch2',
       order: 2,
+      grade: '6',
       number: '02',
       title: 'Machine Learning Basics',
       status: 'locked',
@@ -451,16 +467,19 @@ print(df.dtypes)
         {
           id: 'ch2-u1',
           order: 1,
+      grade: '6',
           title: 'Introduction to ML',
           subtopics: [
             {
               id: 'ch2-u1-s1',
               order: 1,
+      grade: '6',
               title: 'What is Machine Learning?',
               assets: [
                 {
                   id: 'ch2-u1-s1-a1',
                   order: 1,
+      grade: '6',
                   title: 'Machine Learning in 5 Minutes',
                   type: 'video',
                   data: {
@@ -471,6 +490,7 @@ print(df.dtypes)
                 {
                   id: 'ch2-u1-s1-a2',
                   order: 2,
+      grade: '6',
                   title: 'ML Core Concepts — Summary',
                   type: 'summary',
                   data: {
@@ -513,6 +533,7 @@ Problem → Data Collection → Data Cleaning → Feature Engineering
                 {
                   id: 'ch2-u1-s1-a3',
                   order: 3,
+      grade: '6',
                   title: 'ML Concepts Quiz',
                   type: 'quiz',
                   data: {
@@ -600,11 +621,13 @@ model = DecisionTreeClassifier()
             {
               id: 'ch2-u1-s2',
               order: 2,
+      grade: '6',
               title: 'Types of Machine Learning',
               assets: [
                 {
                   id: 'ch2-u1-s2-a1',
                   order: 1,
+      grade: '6',
                   title: 'Supervised vs. Unsupervised vs. Reinforcement',
                   type: 'video',
                   data: {
@@ -615,6 +638,7 @@ model = DecisionTreeClassifier()
                 {
                   id: 'ch2-u1-s2-a2',
                   order: 2,
+      grade: '6',
                   title: 'ML Types — Mindmap',
                   type: 'mindmap',
                   data: {
@@ -646,6 +670,7 @@ model = DecisionTreeClassifier()
                 {
                   id: 'ch2-u1-s2-a3',
                   order: 3,
+      grade: '6',
                   title: 'ML Types — Flashcards',
                   type: 'flashcards',
                   data: {
@@ -671,6 +696,7 @@ model = DecisionTreeClassifier()
     {
       id: 'ch3',
       order: 3,
+      grade: '6',
       number: '03',
       title: 'Neural Networks',
       status: 'locked',
@@ -679,16 +705,19 @@ model = DecisionTreeClassifier()
         {
           id: 'ch3-u1',
           order: 1,
+      grade: '6',
           title: 'Building Blocks',
           subtopics: [
             {
               id: 'ch3-u1-s1',
               order: 1,
+      grade: '6',
               title: 'Perceptrons and Neurons',
               assets: [
                 {
                   id: 'ch3-u1-s1-a1',
                   order: 1,
+      grade: '6',
                   title: 'How Artificial Neurons Work',
                   type: 'video',
                   data: {
@@ -699,6 +728,1251 @@ model = DecisionTreeClassifier()
                 {
                   id: 'ch3-u1-s1-a2',
                   order: 2,
+      grade: '6',
+                  title: 'Neural Network Concepts — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What is a perceptron?', back: 'The simplest artificial neuron: it takes weighted inputs, sums them, adds a bias, and passes the result through an activation function to produce an output.' },
+                      { front: 'What is an activation function and why is it needed?', back: 'A non-linear function applied to a neuron\'s output. Without it, stacking layers is equivalent to a single linear transformation — no non-linearity means no ability to learn complex patterns.' },
+                      { front: 'What does ReLU stand for and what does it do?', back: 'Rectified Linear Unit. ReLU(x) = max(0, x). It zeroes out negative values and passes positive values unchanged. It\'s the most common activation for hidden layers.' },
+                      { front: 'What are weights in a neural network?', back: 'Learnable parameters that scale the importance of each input to a neuron. During training, weights are adjusted to minimize prediction error.' },
+                      { front: 'What is backpropagation?', back: 'The algorithm for training neural networks. It computes how much each weight contributed to the error (via the chain rule of calculus) and adjusts them in the direction that reduces error.' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },,
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 1
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch4',
+      order: 1,
+      grade: '7',
+      number: '01',
+      title: 'Intermediate AI (Grade 7)',
+      status: 'active', // 'completed' | 'active' | 'locked'
+      tags: ['History', 'Turing Test', 'Modern AI'],
+      units: [
+        // ── Unit 1.1 ──────────────────────────────
+        {
+          id: 'ch4-u1',
+          order: 1,
+      grade: '7',
+          title: 'Understanding AI',
+          subtopics: [
+            // ── Subtopic 1.1.1 ────────────────────
+            {
+              id: 'ch4-u1-s1',
+              order: 1,
+      grade: '7',
+              title: 'What is AI?',
+              assets: [
+                {
+                  id: 'ch4-u1-s1-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'What is Artificial Intelligence?',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=ad79nYk2keg',
+                    durationMinutes: 12,
+                  },
+                },
+                {
+                  id: 'ch4-u1-s1-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'AI Explained — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## What is Artificial Intelligence?
+
+Artificial Intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to **think and learn** like humans.
+
+### Key Branches of AI
+
+- **Machine Learning** — Systems that learn from data without explicit programming
+- **Natural Language Processing (NLP)** — Enabling computers to understand human language
+- **Computer Vision** — Teaching machines to interpret visual information
+- **Robotics** — Physical systems guided by AI decision-making
+
+### The Turing Test
+
+Alan Turing proposed in 1950 that a machine could be considered "intelligent" if a human evaluator could not distinguish its responses from those of a human.
+
+> "Can machines think?" — Alan Turing, *Computing Machinery and Intelligence*, 1950
+
+### Why AI Now?
+
+Three forces converged to make modern AI possible:
+1. **Data** — The internet created vast training datasets
+2. **Compute** — GPUs enabled fast parallel processing
+3. **Algorithms** — Breakthroughs like deep learning, transformers
+
+### Key Takeaways
+- AI is not a single technology but a collection of techniques
+- Modern AI is *narrow* (specialized) not *general* (human-level)
+- AI learns patterns from data rather than following rigid rules`,
+                  },
+                },
+                {
+                  id: 'ch4-u1-s1-a3',
+                  order: 3,
+      grade: '7',
+                  title: 'The AI Landscape — Mindmap',
+                  type: 'mindmap',
+                  data: {
+                    format: 'tree',
+                    tree: DEFAULT_AI_MINDMAP_TREE,
+                    outline: `Artificial Intelligence
+  Machine Learning
+    Supervised Learning
+    Unsupervised Learning
+    Reinforcement Learning
+  Deep Learning
+    Advanced Neural Networks (Grade 7)
+    Convolutional Networks (CNNs)
+    Transformers
+  Natural Language Processing
+    Text Classification
+    Translation
+    Large Language Models
+  Computer Vision
+    Image Recognition
+    Object Detection
+  Robotics
+    Autonomous Navigation
+    Manipulation`,
+                  },
+                },
+                {
+                  id: 'ch4-u1-s1-a4',
+                  order: 4,
+                  title: 'What is AI? — Quiz',
+                  type: 'quiz',
+                  data: {
+                    questions: [
+                      {
+                        id: 'q1',
+                        question: 'What did Alan Turing propose in 1950 as a test for machine intelligence?',
+                        options: [
+                          'A machine that could solve mathematical equations',
+                          'A machine whose responses a human evaluator cannot distinguish from a human\'s',
+                          'A machine that could recognize faces',
+                          'A machine that could learn from data',
+                        ],
+                        correct: 1,
+                        explanation: 'The Turing Test, proposed in Turing\'s 1950 paper "Computing Machinery and Intelligence," evaluates whether a machine can exhibit intelligent behaviour indistinguishable from a human.',
+                        hint: 'Think about conversation and human evaluation.',
+                      },
+                      {
+                        id: 'q2',
+                        question: 'Which THREE forces converged to enable modern AI breakthroughs?',
+                        options: [
+                          'Data, Compute, and Algorithms',
+                          'Robots, Sensors, and Cameras',
+                          'Software, Hardware, and Networking',
+                          'Memory, Storage, and Processing',
+                        ],
+                        correct: 0,
+                        explanation: 'The convergence of massive datasets (Data), GPU-powered parallel processing (Compute), and breakthroughs in deep learning (Algorithms) unlocked modern AI capabilities.',
+                        hint: 'Think about what made deep learning possible.',
+                      },
+                      {
+                        id: 'q3',
+                        question: 'What does "narrow AI" mean?',
+                        options: [
+                          'AI that only works on small devices',
+                          'AI that is human-level intelligent across all domains',
+                          'AI that is specialized for a specific task',
+                          'AI that uses only a narrow set of data',
+                        ],
+                        correct: 2,
+                        explanation: 'Narrow AI (or Weak AI) is designed for a specific task, like playing chess or recognizing speech. It contrasts with Artificial General Intelligence (AGI), which doesn\'t yet exist.',
+                        hint: 'Think about specialization vs. general capability.',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            // ── Subtopic 1.1.2 ────────────────────
+            {
+              id: 'ch4-u1-s2',
+              order: 2,
+      grade: '7',
+              title: 'AI in Everyday Life',
+              assets: [
+                {
+                  id: 'ch4-u1-s2-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'AI Around You — Video',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=mJeNghZXtMo',
+                    durationMinutes: 8,
+                  },
+                },
+                {
+                  id: 'ch4-u1-s2-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'Prompt Builder Challenge',
+                  type: 'game',
+                  data: {
+                    file: 'index.html',
+                    _publicBase: '/content/game/prompt-builder-challenge',
+                  },
+                },
+                {
+                  id: 'ch4-u1-s2-a3',
+                  order: 3,
+      grade: '7',
+                  title: 'AI Applications — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What AI technology powers voice assistants like Siri and Alexa?', back: 'Natural Language Processing (NLP) combined with Speech Recognition — they convert speech to text and understand intent.' },
+                      { front: 'How does Netflix decide what to recommend to you?', back: 'Collaborative Filtering — an ML algorithm that finds patterns in what similar users watched and liked.' },
+                      { front: 'What type of AI helps detect fraud in your credit card transactions?', back: 'Anomaly Detection — ML models trained on normal transaction patterns flag unusual behaviour in real-time.' },
+                      { front: 'How do self-driving cars "see" the world?', back: 'Computer Vision using cameras, LiDAR sensors, and deep learning models trained on millions of hours of driving data.' },
+                      { front: 'What makes spam filters smart?', back: 'Bayesian classifiers and neural networks trained on labelled email datasets to distinguish spam from legitimate email.' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        // ── Unit 1.2 ──────────────────────────────
+        {
+          id: 'ch4-u2',
+          order: 2,
+      grade: '7',
+          title: 'How AI Learns',
+          subtopics: [
+            {
+              id: 'ch4-u2-s1',
+              order: 1,
+      grade: '7',
+              title: 'Data and Learning',
+              assets: [
+                {
+                  id: 'ch4-u2-s1-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'How Machines Learn from Data',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=R9OHn5ZF4Uo',
+                    durationMinutes: 14,
+                  },
+                },
+                {
+                  id: 'ch4-u2-s1-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'Training Data & Bias — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## Training Data and Learning
+
+AI models learn by finding **patterns in data**. The quality and diversity of training data directly determines what the model can and cannot do.
+
+### How Supervised Learning Works
+
+\`\`\`
+Input Data → Model → Prediction → Compare with Label → Adjust weights → Repeat
+\`\`\`
+
+1. **Labelled examples** are fed to the model
+2. The model makes a prediction
+3. A **loss function** measures how wrong the prediction was
+4. **Backpropagation** adjusts the model's parameters to reduce error
+5. This repeats for thousands to billions of examples
+
+### Types of ML by Learning Style
+
+| Type | Training Data | Example Use Case |
+|---|---|---|
+| Supervised | Labelled (X → Y pairs) | Image classification, spam detection |
+| Unsupervised | Unlabelled | Customer segmentation, anomaly detection |
+| Reinforcement | Rewards from environment | Game-playing AI, robotic control |
+
+### Why Bias in Data is Dangerous
+
+If training data is biased:
+- A facial recognition model trained on mostly light-skinned faces performs poorly on dark-skinned faces
+- A hiring AI trained on historical data may perpetuate historical discrimination
+
+**Garbage In → Garbage Out** — the model learns exactly what the data teaches it.
+
+### Key Takeaways
+- More data is not always better — **quality and diversity** matter most
+- A model is only as good as its training data
+- Understanding your data is the first step in building responsible AI`,
+                  },
+                },
+                {
+                  id: 'ch4-u2-s1-a3',
+                  order: 3,
+      grade: '7',
+                  title: 'Data Science Lab — Explore a Dataset',
+                  type: 'lab',
+                  data: {
+                    instructions: `## Lab: Exploring a Dataset with Python
+
+In this lab, you'll practise loading and exploring a sample dataset — the first step in any ML pipeline.
+
+**Goal:** Understand what a dataset looks like before training a model.`,
+                    steps: [
+                      'Load the dataset using pandas',
+                      'Print the first 5 rows with df.head()',
+                      'Check for missing values using df.isnull().sum()',
+                      'Plot a histogram of the "age" column',
+                      'Identify which columns are numerical vs. categorical',
+                    ],
+                    starterCode: `import pandas as pd
+import matplotlib.pyplot as plt
+
+# Step 1: Load the dataset
+df = pd.read_csv('sample_data.csv')
+
+# Step 2: Preview the data
+print(df.head())
+
+# Step 3: Check for missing values
+print(df.isnull().sum())
+
+# Step 4: Plot histogram
+# TODO: Add your code here
+# df['age'].hist()
+# plt.show()
+
+# Step 5: Identify column types
+print(df.dtypes)
+`,
+                    hints: [
+                      'Use df.describe() to get quick statistics (mean, min, max) for all numeric columns.',
+                      'df.shape returns (rows, columns) — useful for understanding the size of your dataset.',
+                      'To plot a histogram: df[\'column_name\'].hist(bins=20) then plt.show().',
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 2
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch5',
+      order: 2,
+      grade: '7',
+      number: '02',
+      title: 'Applied Machine Learning (Grade 7)',
+      status: 'locked',
+      tags: ['Supervised Learning', 'Models', 'Training'],
+      units: [
+        {
+          id: 'ch5-u1',
+          order: 1,
+      grade: '7',
+          title: 'Introduction to ML',
+          subtopics: [
+            {
+              id: 'ch5-u1-s1',
+              order: 1,
+      grade: '7',
+              title: 'What is Machine Learning?',
+              assets: [
+                {
+                  id: 'ch5-u1-s1-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'Machine Learning in 5 Minutes',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=ukzFI9rgwfU',
+                    durationMinutes: 5,
+                  },
+                },
+                {
+                  id: 'ch5-u1-s1-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'ML Core Concepts — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## Machine Learning Core Concepts
+
+Machine Learning is a subset of AI where systems **learn from experience** without being explicitly programmed for each task.
+
+### The ML Pipeline
+
+\`\`\`
+Problem → Data Collection → Data Cleaning → Feature Engineering
+  → Model Selection → Training → Evaluation → Deployment → Monitoring
+\`\`\`
+
+### Key ML Concepts
+
+**Features** — The input variables your model uses to make predictions (e.g., age, income, location).
+
+**Labels** — The output value you want to predict (e.g., whether an email is spam or not spam).
+
+**Model** — A mathematical function that maps features to predictions.
+
+**Training** — The process of adjusting model parameters to minimize prediction error.
+
+**Overfitting** — When a model memorizes training data but fails on new examples. Like a student who memorizes answers instead of understanding concepts.
+
+**Generalization** — The goal: a model that performs well on data it has never seen before.
+
+### Common ML Algorithms
+
+| Algorithm | Type | Good For |
+|---|---|---|
+| Linear Regression | Supervised | Predicting numerical values |
+| Decision Trees | Supervised | Classification with interpretability |
+| K-Means | Unsupervised | Grouping similar items |
+| Random Forest | Supervised | High-accuracy classification |
+| Advanced Neural Networks (Grade 7) | Supervised/Unsupervised | Complex patterns, images, text |`,
+                  },
+                },
+                {
+                  id: 'ch5-u1-s1-a3',
+                  order: 3,
+      grade: '7',
+                  title: 'ML Concepts Quiz',
+                  type: 'quiz',
+                  data: {
+                    questions: [
+                      {
+                        id: 'q1',
+                        question: 'In machine learning, what is "overfitting"?',
+                        options: [
+                          'When a model trains too slowly',
+                          'When a model performs well on training data but poorly on new data',
+                          'When a dataset has too many features',
+                          'When the learning rate is too high',
+                        ],
+                        correct: 1,
+                        explanation: 'Overfitting occurs when a model learns the training data too specifically — including its noise — and loses the ability to generalize to unseen examples.',
+                        hint: 'Think about memorizing vs. truly understanding.',
+                      },
+                      {
+                        id: 'q2',
+                        question: 'What is the purpose of a "loss function" in ML training?',
+                        options: [
+                          'To select which features to include',
+                          'To measure how wrong the model\'s predictions are',
+                          'To decide when to stop training',
+                          'To visualize model performance',
+                        ],
+                        correct: 1,
+                        explanation: 'A loss function quantifies the difference between the model\'s predictions and the correct answers. Training minimizes this loss through gradient descent.',
+                        hint: 'It gives the model a "score" of how bad it is doing.',
+                      },
+                    ],
+                  },
+                },
+                {
+                  id: 'ch5-u1-s1-a4',
+                  order: 4,
+                  title: 'Train a Simple Classifier — Lab',
+                  type: 'lab',
+                  data: {
+                    instructions: `## Lab: Train Your First Classifier
+
+In this lab, you'll train a simple Decision Tree classifier on the Iris dataset — one of the classic starting points in machine learning.
+
+**Goal:** Understand the train/test split workflow and evaluate model accuracy.`,
+                    steps: [
+                      'Load the Iris dataset from sklearn',
+                      'Split data into training (80%) and test (20%) sets',
+                      'Create and train a DecisionTreeClassifier',
+                      'Make predictions on the test set',
+                      'Calculate and print the accuracy score',
+                    ],
+                    starterCode: `from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Step 1: Load the dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Step 2: Split into train/test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Step 3: Create the model
+model = DecisionTreeClassifier()
+
+# Step 4: Train it
+# TODO: model.fit(???, ???)
+
+# Step 5: Predict and evaluate
+# TODO: predictions = model.predict(???)
+# TODO: print("Accuracy:", accuracy_score(???, ???))
+`,
+                    hints: [
+                      'model.fit() takes two arguments: the training features and training labels.',
+                      'model.predict() takes the test features (X_test) and returns predicted labels.',
+                      'accuracy_score() compares your predictions to the actual labels (y_test). A perfect score is 1.0.',
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              id: 'ch5-u1-s2',
+              order: 2,
+      grade: '7',
+              title: 'Types of Machine Learning',
+              assets: [
+                {
+                  id: 'ch5-u1-s2-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'Supervised vs. Unsupervised vs. Reinforcement',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=1FZ0A1QCMWc',
+                    durationMinutes: 10,
+                  },
+                },
+                {
+                  id: 'ch5-u1-s2-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'ML Types — Mindmap',
+                  type: 'mindmap',
+                  data: {
+                    format: 'markdown',
+                    outline: `Machine Learning Types
+  Supervised Learning
+    Classification
+      Binary (Spam / Not Spam)
+      Multi-class (Cat / Dog / Bird)
+    Regression
+      Predicting house prices
+      Forecasting sales
+  Unsupervised Learning
+    Clustering
+      K-Means
+      DBSCAN
+    Dimensionality Reduction
+      PCA
+      t-SNE
+  Reinforcement Learning
+    Agent acts in Environment
+    Receives Rewards or Penalties
+    Examples: AlphaGo, Game AI, Robotics
+  Self-Supervised Learning
+    Model creates its own labels
+    Foundation of modern LLMs`,
+                  },
+                },
+                {
+                  id: 'ch5-u1-s2-a3',
+                  order: 3,
+      grade: '7',
+                  title: 'ML Types — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What is Supervised Learning?', back: 'Learning from labelled training data — the model learns a mapping from inputs (X) to known outputs (Y). Examples: spam detection, image classification.' },
+                      { front: 'What is Unsupervised Learning?', back: 'Learning from unlabelled data to find hidden patterns or groupings. Examples: customer segmentation, anomaly detection, topic modelling.' },
+                      { front: 'What is Reinforcement Learning?', back: 'An agent learns by taking actions in an environment and receiving rewards or penalties. Examples: game-playing AI, robotic control.' },
+                      { front: 'What is a Decision Boundary?', back: 'The line (or surface) that a classifier learns to separate different classes. Points on one side are predicted as Class A, on the other as Class B.' },
+                      { front: 'What does "training set" vs. "test set" mean?', back: 'Training set: data used to fit the model. Test set: held-out data used to evaluate generalization. Never train on the test set!' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 3
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch6',
+      order: 3,
+      grade: '7',
+      number: '03',
+      title: 'Advanced Neural Networks (Grade 7)',
+      status: 'locked',
+      tags: ['Perceptrons', 'Backpropagation', 'Deep Learning'],
+      units: [
+        {
+          id: 'ch6-u1',
+          order: 1,
+      grade: '7',
+          title: 'Building Blocks',
+          subtopics: [
+            {
+              id: 'ch6-u1-s1',
+              order: 1,
+      grade: '7',
+              title: 'Perceptrons and Neurons',
+              assets: [
+                {
+                  id: 'ch6-u1-s1-a1',
+                  order: 1,
+      grade: '7',
+                  title: 'How Artificial Neurons Work',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=aircAruvnKk',
+                    durationMinutes: 19,
+                  },
+                },
+                {
+                  id: 'ch6-u1-s1-a2',
+                  order: 2,
+      grade: '7',
+                  title: 'Neural Network Concepts — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What is a perceptron?', back: 'The simplest artificial neuron: it takes weighted inputs, sums them, adds a bias, and passes the result through an activation function to produce an output.' },
+                      { front: 'What is an activation function and why is it needed?', back: 'A non-linear function applied to a neuron\'s output. Without it, stacking layers is equivalent to a single linear transformation — no non-linearity means no ability to learn complex patterns.' },
+                      { front: 'What does ReLU stand for and what does it do?', back: 'Rectified Linear Unit. ReLU(x) = max(0, x). It zeroes out negative values and passes positive values unchanged. It\'s the most common activation for hidden layers.' },
+                      { front: 'What are weights in a neural network?', back: 'Learnable parameters that scale the importance of each input to a neuron. During training, weights are adjusted to minimize prediction error.' },
+                      { front: 'What is backpropagation?', back: 'The algorithm for training neural networks. It computes how much each weight contributed to the error (via the chain rule of calculus) and adjusts them in the direction that reduces error.' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },,
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 1
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch7',
+      order: 1,
+      grade: '8',
+      number: '01',
+      title: 'Advanced AI (Grade 8)',
+      status: 'active', // 'completed' | 'active' | 'locked'
+      tags: ['History', 'Turing Test', 'Modern AI'],
+      units: [
+        // ── Unit 1.1 ──────────────────────────────
+        {
+          id: 'ch7-u1',
+          order: 1,
+      grade: '8',
+          title: 'Understanding AI',
+          subtopics: [
+            // ── Subtopic 1.1.1 ────────────────────
+            {
+              id: 'ch7-u1-s1',
+              order: 1,
+      grade: '8',
+              title: 'What is AI?',
+              assets: [
+                {
+                  id: 'ch7-u1-s1-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'What is Artificial Intelligence?',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=ad79nYk2keg',
+                    durationMinutes: 12,
+                  },
+                },
+                {
+                  id: 'ch7-u1-s1-a2',
+                  order: 2,
+      grade: '8',
+                  title: 'AI Explained — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## What is Artificial Intelligence?
+
+Artificial Intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to **think and learn** like humans.
+
+### Key Branches of AI
+
+- **Machine Learning** — Systems that learn from data without explicit programming
+- **Natural Language Processing (NLP)** — Enabling computers to understand human language
+- **Computer Vision** — Teaching machines to interpret visual information
+- **Robotics** — Physical systems guided by AI decision-making
+
+### The Turing Test
+
+Alan Turing proposed in 1950 that a machine could be considered "intelligent" if a human evaluator could not distinguish its responses from those of a human.
+
+> "Can machines think?" — Alan Turing, *Computing Machinery and Intelligence*, 1950
+
+### Why AI Now?
+
+Three forces converged to make modern AI possible:
+1. **Data** — The internet created vast training datasets
+2. **Compute** — GPUs enabled fast parallel processing
+3. **Algorithms** — Breakthroughs like deep learning, transformers
+
+### Key Takeaways
+- AI is not a single technology but a collection of techniques
+- Modern AI is *narrow* (specialized) not *general* (human-level)
+- AI learns patterns from data rather than following rigid rules`,
+                  },
+                },
+                {
+                  id: 'ch7-u1-s1-a3',
+                  order: 3,
+      grade: '8',
+                  title: 'The AI Landscape — Mindmap',
+                  type: 'mindmap',
+                  data: {
+                    format: 'tree',
+                    tree: DEFAULT_AI_MINDMAP_TREE,
+                    outline: `Artificial Intelligence
+  Machine Learning
+    Supervised Learning
+    Unsupervised Learning
+    Reinforcement Learning
+  Deep Learning
+    AI Ethics & Future (Grade 8)
+    Convolutional Networks (CNNs)
+    Transformers
+  Natural Language Processing
+    Text Classification
+    Translation
+    Large Language Models
+  Computer Vision
+    Image Recognition
+    Object Detection
+  Robotics
+    Autonomous Navigation
+    Manipulation`,
+                  },
+                },
+                {
+                  id: 'ch7-u1-s1-a4',
+                  order: 4,
+                  title: 'What is AI? — Quiz',
+                  type: 'quiz',
+                  data: {
+                    questions: [
+                      {
+                        id: 'q1',
+                        question: 'What did Alan Turing propose in 1950 as a test for machine intelligence?',
+                        options: [
+                          'A machine that could solve mathematical equations',
+                          'A machine whose responses a human evaluator cannot distinguish from a human\'s',
+                          'A machine that could recognize faces',
+                          'A machine that could learn from data',
+                        ],
+                        correct: 1,
+                        explanation: 'The Turing Test, proposed in Turing\'s 1950 paper "Computing Machinery and Intelligence," evaluates whether a machine can exhibit intelligent behaviour indistinguishable from a human.',
+                        hint: 'Think about conversation and human evaluation.',
+                      },
+                      {
+                        id: 'q2',
+                        question: 'Which THREE forces converged to enable modern AI breakthroughs?',
+                        options: [
+                          'Data, Compute, and Algorithms',
+                          'Robots, Sensors, and Cameras',
+                          'Software, Hardware, and Networking',
+                          'Memory, Storage, and Processing',
+                        ],
+                        correct: 0,
+                        explanation: 'The convergence of massive datasets (Data), GPU-powered parallel processing (Compute), and breakthroughs in deep learning (Algorithms) unlocked modern AI capabilities.',
+                        hint: 'Think about what made deep learning possible.',
+                      },
+                      {
+                        id: 'q3',
+                        question: 'What does "narrow AI" mean?',
+                        options: [
+                          'AI that only works on small devices',
+                          'AI that is human-level intelligent across all domains',
+                          'AI that is specialized for a specific task',
+                          'AI that uses only a narrow set of data',
+                        ],
+                        correct: 2,
+                        explanation: 'Narrow AI (or Weak AI) is designed for a specific task, like playing chess or recognizing speech. It contrasts with Artificial General Intelligence (AGI), which doesn\'t yet exist.',
+                        hint: 'Think about specialization vs. general capability.',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            // ── Subtopic 1.1.2 ────────────────────
+            {
+              id: 'ch7-u1-s2',
+              order: 2,
+      grade: '8',
+              title: 'AI in Everyday Life',
+              assets: [
+                {
+                  id: 'ch7-u1-s2-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'AI Around You — Video',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=mJeNghZXtMo',
+                    durationMinutes: 8,
+                  },
+                },
+                {
+                  id: 'ch7-u1-s2-a2',
+                  order: 2,
+      grade: '8',
+                  title: 'Prompt Builder Challenge',
+                  type: 'game',
+                  data: {
+                    file: 'index.html',
+                    _publicBase: '/content/game/prompt-builder-challenge',
+                  },
+                },
+                {
+                  id: 'ch7-u1-s2-a3',
+                  order: 3,
+      grade: '8',
+                  title: 'AI Applications — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What AI technology powers voice assistants like Siri and Alexa?', back: 'Natural Language Processing (NLP) combined with Speech Recognition — they convert speech to text and understand intent.' },
+                      { front: 'How does Netflix decide what to recommend to you?', back: 'Collaborative Filtering — an ML algorithm that finds patterns in what similar users watched and liked.' },
+                      { front: 'What type of AI helps detect fraud in your credit card transactions?', back: 'Anomaly Detection — ML models trained on normal transaction patterns flag unusual behaviour in real-time.' },
+                      { front: 'How do self-driving cars "see" the world?', back: 'Computer Vision using cameras, LiDAR sensors, and deep learning models trained on millions of hours of driving data.' },
+                      { front: 'What makes spam filters smart?', back: 'Bayesian classifiers and neural networks trained on labelled email datasets to distinguish spam from legitimate email.' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        // ── Unit 1.2 ──────────────────────────────
+        {
+          id: 'ch7-u2',
+          order: 2,
+      grade: '8',
+          title: 'How AI Learns',
+          subtopics: [
+            {
+              id: 'ch7-u2-s1',
+              order: 1,
+      grade: '8',
+              title: 'Data and Learning',
+              assets: [
+                {
+                  id: 'ch7-u2-s1-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'How Machines Learn from Data',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=R9OHn5ZF4Uo',
+                    durationMinutes: 14,
+                  },
+                },
+                {
+                  id: 'ch7-u2-s1-a2',
+                  order: 2,
+      grade: '8',
+                  title: 'Training Data & Bias — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## Training Data and Learning
+
+AI models learn by finding **patterns in data**. The quality and diversity of training data directly determines what the model can and cannot do.
+
+### How Supervised Learning Works
+
+\`\`\`
+Input Data → Model → Prediction → Compare with Label → Adjust weights → Repeat
+\`\`\`
+
+1. **Labelled examples** are fed to the model
+2. The model makes a prediction
+3. A **loss function** measures how wrong the prediction was
+4. **Backpropagation** adjusts the model's parameters to reduce error
+5. This repeats for thousands to billions of examples
+
+### Types of ML by Learning Style
+
+| Type | Training Data | Example Use Case |
+|---|---|---|
+| Supervised | Labelled (X → Y pairs) | Image classification, spam detection |
+| Unsupervised | Unlabelled | Customer segmentation, anomaly detection |
+| Reinforcement | Rewards from environment | Game-playing AI, robotic control |
+
+### Why Bias in Data is Dangerous
+
+If training data is biased:
+- A facial recognition model trained on mostly light-skinned faces performs poorly on dark-skinned faces
+- A hiring AI trained on historical data may perpetuate historical discrimination
+
+**Garbage In → Garbage Out** — the model learns exactly what the data teaches it.
+
+### Key Takeaways
+- More data is not always better — **quality and diversity** matter most
+- A model is only as good as its training data
+- Understanding your data is the first step in building responsible AI`,
+                  },
+                },
+                {
+                  id: 'ch7-u2-s1-a3',
+                  order: 3,
+      grade: '8',
+                  title: 'Data Science Lab — Explore a Dataset',
+                  type: 'lab',
+                  data: {
+                    instructions: `## Lab: Exploring a Dataset with Python
+
+In this lab, you'll practise loading and exploring a sample dataset — the first step in any ML pipeline.
+
+**Goal:** Understand what a dataset looks like before training a model.`,
+                    steps: [
+                      'Load the dataset using pandas',
+                      'Print the first 5 rows with df.head()',
+                      'Check for missing values using df.isnull().sum()',
+                      'Plot a histogram of the "age" column',
+                      'Identify which columns are numerical vs. categorical',
+                    ],
+                    starterCode: `import pandas as pd
+import matplotlib.pyplot as plt
+
+# Step 1: Load the dataset
+df = pd.read_csv('sample_data.csv')
+
+# Step 2: Preview the data
+print(df.head())
+
+# Step 3: Check for missing values
+print(df.isnull().sum())
+
+# Step 4: Plot histogram
+# TODO: Add your code here
+# df['age'].hist()
+# plt.show()
+
+# Step 5: Identify column types
+print(df.dtypes)
+`,
+                    hints: [
+                      'Use df.describe() to get quick statistics (mean, min, max) for all numeric columns.',
+                      'df.shape returns (rows, columns) — useful for understanding the size of your dataset.',
+                      'To plot a histogram: df[\'column_name\'].hist(bins=20) then plt.show().',
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 2
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch8',
+      order: 2,
+      grade: '8',
+      number: '02',
+      title: 'Deep Learning (Grade 8)',
+      status: 'locked',
+      tags: ['Supervised Learning', 'Models', 'Training'],
+      units: [
+        {
+          id: 'ch8-u1',
+          order: 1,
+      grade: '8',
+          title: 'Introduction to ML',
+          subtopics: [
+            {
+              id: 'ch8-u1-s1',
+              order: 1,
+      grade: '8',
+              title: 'What is Machine Learning?',
+              assets: [
+                {
+                  id: 'ch8-u1-s1-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'Machine Learning in 5 Minutes',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=ukzFI9rgwfU',
+                    durationMinutes: 5,
+                  },
+                },
+                {
+                  id: 'ch8-u1-s1-a2',
+                  order: 2,
+      grade: '8',
+                  title: 'ML Core Concepts — Summary',
+                  type: 'summary',
+                  data: {
+                    body: `## Machine Learning Core Concepts
+
+Machine Learning is a subset of AI where systems **learn from experience** without being explicitly programmed for each task.
+
+### The ML Pipeline
+
+\`\`\`
+Problem → Data Collection → Data Cleaning → Feature Engineering
+  → Model Selection → Training → Evaluation → Deployment → Monitoring
+\`\`\`
+
+### Key ML Concepts
+
+**Features** — The input variables your model uses to make predictions (e.g., age, income, location).
+
+**Labels** — The output value you want to predict (e.g., whether an email is spam or not spam).
+
+**Model** — A mathematical function that maps features to predictions.
+
+**Training** — The process of adjusting model parameters to minimize prediction error.
+
+**Overfitting** — When a model memorizes training data but fails on new examples. Like a student who memorizes answers instead of understanding concepts.
+
+**Generalization** — The goal: a model that performs well on data it has never seen before.
+
+### Common ML Algorithms
+
+| Algorithm | Type | Good For |
+|---|---|---|
+| Linear Regression | Supervised | Predicting numerical values |
+| Decision Trees | Supervised | Classification with interpretability |
+| K-Means | Unsupervised | Grouping similar items |
+| Random Forest | Supervised | High-accuracy classification |
+| AI Ethics & Future (Grade 8) | Supervised/Unsupervised | Complex patterns, images, text |`,
+                  },
+                },
+                {
+                  id: 'ch8-u1-s1-a3',
+                  order: 3,
+      grade: '8',
+                  title: 'ML Concepts Quiz',
+                  type: 'quiz',
+                  data: {
+                    questions: [
+                      {
+                        id: 'q1',
+                        question: 'In machine learning, what is "overfitting"?',
+                        options: [
+                          'When a model trains too slowly',
+                          'When a model performs well on training data but poorly on new data',
+                          'When a dataset has too many features',
+                          'When the learning rate is too high',
+                        ],
+                        correct: 1,
+                        explanation: 'Overfitting occurs when a model learns the training data too specifically — including its noise — and loses the ability to generalize to unseen examples.',
+                        hint: 'Think about memorizing vs. truly understanding.',
+                      },
+                      {
+                        id: 'q2',
+                        question: 'What is the purpose of a "loss function" in ML training?',
+                        options: [
+                          'To select which features to include',
+                          'To measure how wrong the model\'s predictions are',
+                          'To decide when to stop training',
+                          'To visualize model performance',
+                        ],
+                        correct: 1,
+                        explanation: 'A loss function quantifies the difference between the model\'s predictions and the correct answers. Training minimizes this loss through gradient descent.',
+                        hint: 'It gives the model a "score" of how bad it is doing.',
+                      },
+                    ],
+                  },
+                },
+                {
+                  id: 'ch8-u1-s1-a4',
+                  order: 4,
+                  title: 'Train a Simple Classifier — Lab',
+                  type: 'lab',
+                  data: {
+                    instructions: `## Lab: Train Your First Classifier
+
+In this lab, you'll train a simple Decision Tree classifier on the Iris dataset — one of the classic starting points in machine learning.
+
+**Goal:** Understand the train/test split workflow and evaluate model accuracy.`,
+                    steps: [
+                      'Load the Iris dataset from sklearn',
+                      'Split data into training (80%) and test (20%) sets',
+                      'Create and train a DecisionTreeClassifier',
+                      'Make predictions on the test set',
+                      'Calculate and print the accuracy score',
+                    ],
+                    starterCode: `from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Step 1: Load the dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Step 2: Split into train/test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Step 3: Create the model
+model = DecisionTreeClassifier()
+
+# Step 4: Train it
+# TODO: model.fit(???, ???)
+
+# Step 5: Predict and evaluate
+# TODO: predictions = model.predict(???)
+# TODO: print("Accuracy:", accuracy_score(???, ???))
+`,
+                    hints: [
+                      'model.fit() takes two arguments: the training features and training labels.',
+                      'model.predict() takes the test features (X_test) and returns predicted labels.',
+                      'accuracy_score() compares your predictions to the actual labels (y_test). A perfect score is 1.0.',
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              id: 'ch8-u1-s2',
+              order: 2,
+      grade: '8',
+              title: 'Types of Machine Learning',
+              assets: [
+                {
+                  id: 'ch8-u1-s2-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'Supervised vs. Unsupervised vs. Reinforcement',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=1FZ0A1QCMWc',
+                    durationMinutes: 10,
+                  },
+                },
+                {
+                  id: 'ch8-u1-s2-a2',
+                  order: 2,
+      grade: '8',
+                  title: 'ML Types — Mindmap',
+                  type: 'mindmap',
+                  data: {
+                    format: 'markdown',
+                    outline: `Machine Learning Types
+  Supervised Learning
+    Classification
+      Binary (Spam / Not Spam)
+      Multi-class (Cat / Dog / Bird)
+    Regression
+      Predicting house prices
+      Forecasting sales
+  Unsupervised Learning
+    Clustering
+      K-Means
+      DBSCAN
+    Dimensionality Reduction
+      PCA
+      t-SNE
+  Reinforcement Learning
+    Agent acts in Environment
+    Receives Rewards or Penalties
+    Examples: AlphaGo, Game AI, Robotics
+  Self-Supervised Learning
+    Model creates its own labels
+    Foundation of modern LLMs`,
+                  },
+                },
+                {
+                  id: 'ch8-u1-s2-a3',
+                  order: 3,
+      grade: '8',
+                  title: 'ML Types — Flashcards',
+                  type: 'flashcards',
+                  data: {
+                    cards: [
+                      { front: 'What is Supervised Learning?', back: 'Learning from labelled training data — the model learns a mapping from inputs (X) to known outputs (Y). Examples: spam detection, image classification.' },
+                      { front: 'What is Unsupervised Learning?', back: 'Learning from unlabelled data to find hidden patterns or groupings. Examples: customer segmentation, anomaly detection, topic modelling.' },
+                      { front: 'What is Reinforcement Learning?', back: 'An agent learns by taking actions in an environment and receiving rewards or penalties. Examples: game-playing AI, robotic control.' },
+                      { front: 'What is a Decision Boundary?', back: 'The line (or surface) that a classifier learns to separate different classes. Points on one side are predicted as Class A, on the other as Class B.' },
+                      { front: 'What does "training set" vs. "test set" mean?', back: 'Training set: data used to fit the model. Test set: held-out data used to evaluate generalization. Never train on the test set!' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ─────────────────────────────────────────────
+    // CHAPTER 3
+    // ─────────────────────────────────────────────
+    {
+      id: 'ch9',
+      order: 3,
+      grade: '8',
+      number: '03',
+      title: 'AI Ethics & Future (Grade 8)',
+      status: 'locked',
+      tags: ['Perceptrons', 'Backpropagation', 'Deep Learning'],
+      units: [
+        {
+          id: 'ch9-u1',
+          order: 1,
+      grade: '8',
+          title: 'Building Blocks',
+          subtopics: [
+            {
+              id: 'ch9-u1-s1',
+              order: 1,
+      grade: '8',
+              title: 'Perceptrons and Neurons',
+              assets: [
+                {
+                  id: 'ch9-u1-s1-a1',
+                  order: 1,
+      grade: '8',
+                  title: 'How Artificial Neurons Work',
+                  type: 'video',
+                  data: {
+                    url: 'https://www.youtube.com/watch?v=aircAruvnKk',
+                    durationMinutes: 19,
+                  },
+                },
+                {
+                  id: 'ch9-u1-s1-a2',
+                  order: 2,
+      grade: '8',
                   title: 'Neural Network Concepts — Flashcards',
                   type: 'flashcards',
                   data: {

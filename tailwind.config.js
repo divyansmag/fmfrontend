@@ -6,6 +6,12 @@ export default {
     extend: {
       spacing: {
         18: '4.5rem',
+        4.5: '1.125rem',
+        7.5: '1.875rem',
+      },
+      boxShadow: {
+        xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        '2xs': '0 1px rgb(0 0 0 / 0.05)',
       },
       colors: {
         brand: {

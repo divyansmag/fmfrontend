@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 
+import { LEADERBOARD } from './Dashboard.jsx';
+
 const BADGES = [
   { icon: Zap, title: 'Quick Learner', desc: 'Complete 5 lessons in 1 day', wrap: 'bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400' },
   { icon: Code, title: 'Prompt Engineer', desc: 'Write 100 successful AI prompts', wrap: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' },
@@ -22,12 +24,6 @@ const BADGES = [
 ];
 
 const LEADERBOARD_TABS = ['Global', 'Class', 'Friends'];
-
-const LEADERBOARD = [
-  { rank: 1, initials: 'AS', name: 'Arjun S.', level: 'Lvl 15', xp: '12,400 XP', style: 'first', avatar: '/assets/avatar1.jpg' },
-  { rank: 2, initials: 'PV', name: 'Priya V.', level: 'Lvl 14', xp: '11,800 XP', avatar: '/assets/avatar2.jpg' },
-  { rank: 3, initials: 'IM', name: 'Ishaan M.', level: 'Lvl 13', xp: '11,280 XP', bronze: true, avatar: '/assets/avatar3.jpg' },
-];
 
 export default function Progress() {
   const { user, redeemReward, showToast } = useApp();
@@ -217,8 +213,8 @@ export default function Progress() {
           </div>
 
           <div className="space-y-3">
-            {LEADERBOARD.map((row) => (
-              <div key={row.rank} className={`flex items-center justify-between p-2.5 rounded-2xl ${row.style === 'first' ? 'bg-slate-50 dark:bg-slate-700/40' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
+            {LEADERBOARD[user.grade?.replace('Grade ', '') || '6'].map((row) => (
+              <div key={row.rank} className={`flex items-center justify-between p-2.5 rounded-2xl ${row.highlight === 'first' ? 'bg-slate-50 dark:bg-slate-700/40' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs font-black w-4 text-center ${row.rank === 1 ? 'text-amber-500' : row.bronze ? 'text-amber-700' : 'text-slate-400'}`}>{row.rank}</span>
                   {row.avatar ? (
@@ -242,7 +238,9 @@ export default function Progress() {
             <div className="flex items-center justify-between p-3 rounded-2xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="text-xs font-black text-purple-600 dark:text-purple-400 w-4 text-center">48</span>
-                <div className="w-8 h-8 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">DN</div>
+                <div className="w-8 h-8 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                  {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                </div>
                 <div>
                   <div className="text-xs font-bold text-purple-900 dark:text-purple-200">{user.name} (You)</div>
                   <div className="text-[10px] text-purple-600 dark:text-purple-400 font-semibold">Lvl {user.levelNumber}</div>

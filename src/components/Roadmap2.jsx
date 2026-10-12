@@ -21,7 +21,9 @@ import { getSortedChapters, getSortedUnits, getSortedSubtopics, getSortedAssets 
 
 export default function Roadmap2() {
   const {
+    user,
     courseData,
+    chapters,
     navigateToAsset,
     navigateTo,
     showToast,
@@ -31,7 +33,7 @@ export default function Roadmap2() {
     openChapterModal,
   } = useApp();
 
-  const sortedChapters = getSortedChapters(courseData);
+  const sortedChapters = chapters;
 
   // Flatten all subtopics across all chapters and units for dynamic Duolingo roadmap
   const roadmapNodes = useMemo(() => {
@@ -60,11 +62,18 @@ export default function Roadmap2() {
     return nodes;
   }, [sortedChapters]);
 
-  // Find active chapter and active unit
-  const activeChapter = sortedChapters.find((ch) => ch.status === 'active') || sortedChapters[0];
+  // Identify next upcoming incomplete node (for "Start Next Up" / Mascot)
+  const nextIncompleteNode = roadmapNodes.find((n) => {
+    if (n.chapter.status === 'locked') return false;
+    const p = getSubtopicProgress(n.subtopic);
+    return p.pct < 100 && p.total > 0;
+  }) || roadmapNodes.find(n => getSubtopicProgress(n.subtopic).total > 0) || roadmapNodes[0];
+
+  // Find active chapter and active unit based on the next incomplete node
+  const activeChapter = nextIncompleteNode?.chapter || sortedChapters.find((ch) => ch.status === 'active') || sortedChapters[0];
   const [expandedChapterId, setExpandedChapterId] = useState(activeChapter?.id);
   const units = activeChapter ? getSortedUnits(activeChapter) : [];
-  const activeUnit = units.find((u) => getUnitProgress(u).pct < 100) || units[0];
+  const activeUnit = nextIncompleteNode?.unit || units.find((u) => getUnitProgress(u).pct < 100) || units[0];
   const activeUnitProgress = activeUnit ? getUnitProgress(activeUnit) : { pct: 0, completed: 0, total: 0 };
 
   const activeTheme = {
@@ -73,12 +82,6 @@ export default function Roadmap2() {
     pathStart: '#C084FC', pathMid: '#7C3AED', pathEnd: '#4F46E5', pathShadow: 'rgba(124, 58, 237, 0.5)',
     unitBg: 'from-indigo-500 to-purple-600', nodeActive: 'from-purple-700 via-purple-600 to-indigo-600 shadow-purple-600/50 ring-purple-300'
   };
-  // Identify next upcoming incomplete node (for "Start Next Up" / Mascot)
-  const nextIncompleteNode = roadmapNodes.find((n) => {
-    if (n.chapter.status === 'locked') return false;
-    const p = getSubtopicProgress(n.subtopic);
-    return p.pct < 100;
-  }) || roadmapNodes[0];
 
   const activeNodeRef = useRef(null);
   const [showJumpToCurrent, setShowJumpToCurrent] = useState(false);
@@ -125,20 +128,26 @@ export default function Roadmap2() {
   // Dynamic position layout calculation to guarantee pixel-perfect SVG path alignment
   const NODE_Y_SPACING = 140;
   const BANNER_HEIGHT = 90;
-  
+
   const nodeLayout = useMemo(() => {
     let y = 120; // Increased initial Y offset to accommodate header overlap
     const layout = [];
     roadmapNodes.forEach((node, i) => {
+      // Only render chapter banner for new chapters (skip the first one since it's in the top header)
+      if (node.isFirstInChapter && node.chapter.id !== roadmapNodes[0].chapter.id) {
+        layout.push({ type: 'chapter-banner', node, y });
+        y += 120; // Space for the large purple banner
+      }
+
       if (node.isFirstInUnit) {
-        layout.push({ type: 'banner', node, y });
+        layout.push({ type: 'unit-banner', node, y });
         y += BANNER_HEIGHT;
       }
-      
+
       const pattern = [78, 22]; // percentage X positions (right, left)
       const xPct = pattern[i % pattern.length];
       const xSvg = (xPct / 100) * 500;
-      
+
       layout.push({ type: 'node', node, index: i, y, xPct, xSvg });
       y += NODE_Y_SPACING;
     });
@@ -204,15 +213,7 @@ export default function Roadmap2() {
           <div className="absolute top-1/3 -left-20 w-72 h-72 bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-10 right-[-10%] w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Floating decorative mini-badges */}
-          <div className="absolute top-28 left-8 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-purple-200/50 dark:border-purple-800/40 shadow-sm animate-bounce duration-1000">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span className="text-[11px] font-black text-slate-700 dark:text-slate-200">Streak: 12 Days!</span>
-          </div>
-          <div className="absolute top-44 right-8 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-purple-200/50 dark:border-purple-800/40 shadow-sm">
-            <Trophy className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span className="text-[11px] font-black text-slate-700 dark:text-slate-200">Top 10% Learner</span>
-          </div>
+
 
           {/* Unit Header Card — dynamically shows the active unit and chapter */}
           <div className="w-full bg-gradient-to-r from-purple-700 to-purple-600 rounded-3xl p-6 sm:p-7 text-white shadow-lg shadow-purple-500/20 flex items-center justify-between z-30 relative overflow-hidden border border-purple-600/50">
@@ -221,7 +222,7 @@ export default function Roadmap2() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-3 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md border border-white/10">
-                  {courseData.title}
+                  {user.grade || 'Grade 6'} Curriculum
                 </span>
                 <button
                   type="button"
@@ -251,158 +252,273 @@ export default function Roadmap2() {
           </div>
 
           {/* Winding SVG Path + Completely Dynamic Nodes */}
-          <div className="relative w-full max-w-md mx-auto shrink-0 py-0 -mt-8" style={{ height: nodeLayout.totalHeight, minHeight: nodeLayout.totalHeight }}>
-            <svg
-              className="absolute inset-0 w-full h-full pointer-events-none drop-shadow-md z-0"
-              viewBox={`0 0 500 ${nodeLayout.totalHeight}`}
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-            >
-              {/* Smooth Unfinished Path */}
-              <path
-                d={dashedPath}
-                stroke="#E2E8F0"
-                strokeWidth="26"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+          <div className="relative w-full mx-auto shrink-0 py-0 -mt-8" style={{ height: nodeLayout.totalHeight, minHeight: nodeLayout.totalHeight }}>
 
-              {/* Flowing Energy Line inside the Unfinished Path */}
-              <path
-                d={dashedPath}
-                stroke="white"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeDasharray="20 30"
-                className="opacity-50"
-                style={{ animation: 'dash 15s linear infinite' }}
-              />
+            {/* Constrained container for SVG path and nodes */}
+            <div className="absolute inset-0 w-full max-w-md mx-auto pointer-events-none z-10">
+              <svg
+                className="absolute inset-0 w-full h-full drop-shadow-md z-0"
+                viewBox={`0 0 500 ${nodeLayout.totalHeight}`}
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+              >
+                {/* Smooth Unfinished Path */}
+                <path
+                  d={dashedPath}
+                  stroke="#E2E8F0"
+                  strokeWidth="26"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
 
-              {/* Solid Completed Path with Glow */}
-              <path
-                d={solidPath}
-                stroke="url(#dynamicGradient)"
-                strokeWidth="26"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ filter: `drop-shadow(0 0 12px ${activeTheme.pathShadow})` }}
-              />
+                {/* Flowing Energy Line inside the Unfinished Path */}
+                <path
+                  d={dashedPath}
+                  stroke="white"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="20 30"
+                  className="opacity-50"
+                  style={{ animation: 'dash 15s linear infinite' }}
+                />
 
-              {/* Flowing Energy Line inside the Solid Path */}
-              <path
-                d={solidPath}
-                stroke="white"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeDasharray="20 30"
-                className="opacity-60"
-                style={{ animation: 'dash 15s linear infinite' }}
-              />
-              <defs>
-                <linearGradient id="dynamicGradient" x1="250" y1="15" x2="250" y2={nodeLayout.totalHeight} gradientUnits="userSpaceOnUse">
-                  <stop stopColor={activeTheme.pathStart} />
-                  <stop offset="0.5" stopColor={activeTheme.pathMid} />
-                  <stop offset="1" stopColor={activeTheme.pathEnd} />
-                </linearGradient>
-              </defs>
-            </svg>
+                {/* Solid Completed Path with Glow */}
+                <path
+                  d={solidPath}
+                  stroke="url(#dynamicGradient)"
+                  strokeWidth="26"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ filter: `drop-shadow(0 0 12px ${activeTheme.pathShadow})` }}
+                />
+
+                {/* Flowing Energy Line inside the Solid Path */}
+                <path
+                  d={solidPath}
+                  stroke="white"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="20 30"
+                  className="opacity-60"
+                  style={{ animation: 'dash 15s linear infinite' }}
+                />
+                <defs>
+                  <linearGradient id="dynamicGradient" x1="250" y1="15" x2="250" y2={nodeLayout.totalHeight} gradientUnits="userSpaceOnUse">
+                    <stop stopColor={activeTheme.pathStart} />
+                    <stop offset="0.5" stopColor={activeTheme.pathMid} />
+                    <stop offset="1" stopColor={activeTheme.pathEnd} />
+                  </linearGradient>
+                </defs>
+              </svg>
+              {nodeLayout.layout.map((item, idx) => {
+                if (item.type === 'node') {
+                  const node = item.node;
+                  const progress = getSubtopicProgress(node.subtopic);
+                  const isNextUp = nextIncompleteNode?.id === node.id;
+
+                  let state = 'available';
+                  if (node.chapter.status === 'locked') state = 'locked';
+                  else if (progress.total === 0) state = 'empty';
+                  else if (progress.pct === 100) state = 'completed';
+                  else if (isNextUp) state = 'active';
+                  else if (progress.pct > 0) state = 'active';
+
+                  const IconComponent = [Target, Compass, Star, Zap, Flame, Award, BookOpen, Trophy][item.index % 8];
+
+                  return (
+                    <div
+                      key={`node-${node.id}`}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 group z-10 pointer-events-auto"
+                      style={{ left: `${item.xPct}%`, top: item.y }}
+                      ref={(el) => { if (isNextUp) activeNodeRef.current = el; }}
+                    >
+
+                      {/* Tooltip */}
+                      <div className={`absolute ${item.xPct > 50 ? 'right-20' : 'left-20'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-[11px] font-extrabold px-3.5 py-2 rounded-2xl shadow-xl pointer-events-none whitespace-nowrap backdrop-blur-md z-30 border border-slate-700/50 dark:border-slate-200/50`}>
+                        <div className="font-black">{node.subtopic.title}</div>
+                        <div className="text-[10px] opacity-80 mt-0.5">
+                          {node.unit.title} · {progress.completed}/{progress.total} Assets
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleNodeClick(node)}
+                        className={`w-16 h-16 rounded-full text-white shadow-xl flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all ring-4 ring-white dark:ring-slate-900 relative ${state === 'completed'
+                          ? 'bg-gradient-to-tr from-emerald-500 via-teal-500 to-emerald-600 shadow-emerald-500/40'
+                          : state === 'active'
+                            ? `bg-gradient-to-tr ${activeTheme.nodeActive} animate-pulse`
+                            : state === 'locked'
+                              ? 'bg-gradient-to-tr from-slate-400 via-slate-500 to-slate-600 shadow-slate-500/30 opacity-60'
+                              : `bg-gradient-to-tr ${activeTheme.unitBg} shadow-slate-500/30`
+                          }`}
+                      >
+                        <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        {state === 'completed' ? (
+                          <Check className="w-7 h-7 stroke-[3]" />
+                        ) : state === 'locked' ? (
+                          <Lock className="w-5 h-5" />
+                        ) : state === 'active' ? (
+                          <IconComponent className="w-6 h-6 stroke-[2.5]" />
+                        ) : (
+                          <IconComponent className="w-6 h-6 stroke-[2.5]" />
+                        )}
+                      </button>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            {/* Full-width container for Banners */}
             {nodeLayout.layout.map((item, idx) => {
-              if (item.type === 'banner') {
+              if (item.type === 'chapter-banner') {
                 const node = item.node;
-                const progress = getSubtopicProgress(node.subtopic);
+                const chapterNodeCount = node.chapter.units?.reduce((a, u) => a + (u.subtopics?.length || 0), 0) || 0;
+                let completed = 0;
+                let total = 0;
+                node.chapter.units?.forEach(u => {
+                  u.subtopics?.forEach(s => {
+                    const p = getSubtopicProgress(s);
+                    completed += p.completed;
+                    total += p.total;
+                  });
+                });
+
                 return (
-                  <div 
-                    key={`banner-${node.id}`}
+                  <div
+                    key={`chapter-${node.chapter.id}`}
                     className="absolute w-full px-4 -translate-y-1/2 z-20"
                     style={{ top: item.y, left: 0 }}
                   >
-                    <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-purple-200/70 dark:border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+                    <div className="w-full bg-gradient-to-r from-purple-700 to-purple-600 rounded-3xl p-6 sm:p-7 text-white shadow-lg shadow-purple-500/20 flex items-center justify-between z-30 relative overflow-hidden border border-purple-600/50">
+                      <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-xl pointer-events-none" />
+                      <div className="absolute top-0 right-1/4 w-24 h-24 bg-purple-400/20 rounded-full blur-lg pointer-events-none" />
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="px-3 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md border border-white/10">
+                            {user.grade || 'Grade 6'} Curriculum
+                          </span>
+                          <span className="px-3 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md border border-white/10">
+                            Chapter {node.chapter.number}
+                          </span>
+                        </div>
+                        <h3 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white drop-shadow-sm">
+                          {node.chapter.title}
+                        </h3>
+                        <p className="text-purple-100 text-xs sm:text-sm mt-1 font-medium max-w-md">
+                          {chapterNodeCount} dynamic lesson nodes
+                        </p>
+                      </div>
+                      <div className="relative z-10 hidden sm:flex flex-col items-end gap-2 flex-shrink-0">
+                        <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-inner">
+                          <Award className="w-6 h-6 text-emerald-300" />
+                        </div>
+                        <span className="px-3.5 py-1.5 rounded-2xl bg-white/20 backdrop-blur-md text-xs font-black flex items-center gap-1.5 shadow-inner border border-white/10">
+                          <Check className="w-4 h-4 stroke-[3] text-emerald-300" />
+                          {completed}/{total} Done
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (item.type === 'unit-banner' || item.type === 'banner') {
+                const node = item.node;
+                const progress = getSubtopicProgress(node.subtopic);
+                return (
+                  <div
+                    key={`banner-${node.id}`}
+                    className="absolute w-full max-w-md left-1/2 -translate-x-1/2 px-4 -translate-y-1/2 z-20"
+                    style={{ top: item.y }}
+                  >
+                    <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/70 dark:border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeTheme.unitBg} text-white flex items-center justify-center font-black text-xs shadow-sm`}>
                           U{node.unit.order}
                         </div>
                         <div>
-                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-400">
-                            {node.chapter.title}
+                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                            Unit {node.unit.order}
                           </div>
                           <h4 className="text-xs font-black text-slate-900 dark:text-white font-display">
-                            Unit {node.unit.order}: {node.unit.title}
+                            {node.unit.title}
                           </h4>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-[10px] font-black text-purple-600 dark:text-purple-300 border border-purple-100 dark:border-purple-900/50">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900/60 text-[10px] font-black text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800/50">
                         {progress.completed}/{progress.total}
                       </span>
                     </div>
                   </div>
                 );
               }
-
-              if (item.type === 'node') {
-                const node = item.node;
-                const progress = getSubtopicProgress(node.subtopic);
-                const isNextUp = nextIncompleteNode?.id === node.id;
-                
-                let state = 'available';
-                if (node.chapter.status === 'locked') state = 'locked';
-                else if (progress.total === 0) state = 'empty';
-                else if (progress.pct === 100) state = 'completed';
-                else if (isNextUp) state = 'active';
-                else if (progress.pct > 0) state = 'active';
-
-                const emojis = ['🧠', '🤖', '⚔️', '🌟', '📚', '🔮', '💡', '🔥', '⚡', '🚀'];
-                const emoji = emojis[item.index % emojis.length];
-
-                return (
-                  <div
-                    key={`node-${node.id}`}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 group z-10"
-                    style={{ left: `${item.xPct}%`, top: item.y }}
-                    ref={(el) => { if (isNextUp) activeNodeRef.current = el; }}
-                  >
-                    {/* Tooltip */}
-                    <div className={`absolute ${item.xPct > 50 ? 'right-20' : 'left-20'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-[11px] font-extrabold px-3.5 py-2 rounded-2xl shadow-xl pointer-events-none whitespace-nowrap backdrop-blur-md z-30 border border-slate-700/50 dark:border-slate-200/50`}>
-                      <div className="font-black">{node.subtopic.title}</div>
-                      <div className="text-[10px] opacity-80 mt-0.5">
-                        {node.unit.title} · {progress.completed}/{progress.total} Assets
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleNodeClick(node)}
-                      className={`w-16 h-16 rounded-full text-white shadow-xl flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all ring-4 ring-white dark:ring-slate-900 relative ${state === 'completed'
-                        ? 'bg-gradient-to-tr from-emerald-500 via-teal-500 to-emerald-600 shadow-emerald-500/40'
-                        : state === 'active'
-                          ? `bg-gradient-to-tr ${activeTheme.nodeActive} animate-pulse`
-                          : state === 'locked'
-                            ? 'bg-gradient-to-tr from-slate-400 via-slate-500 to-slate-600 shadow-slate-500/30 opacity-60'
-                            : `bg-gradient-to-tr ${activeTheme.unitBg} shadow-slate-500/30`
-                        }`}
-                    >
-                      <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {state === 'completed' ? (
-                        <Check className="w-7 h-7 stroke-[3]" />
-                      ) : state === 'locked' ? (
-                        <Lock className="w-5 h-5" />
-                      ) : state === 'active' ? (
-                        <span className="text-xl">{emoji}</span>
-                      ) : (
-                        <span className="text-xl">{emoji}</span>
-                      )}
-                    </button>
-                  </div>
-                );
-              }
               return null;
             })}
-            {/* Quick jump button removed */}
+            {/* Render mascots as polaroids along the path */}
+            {(() => {
+                const placements = [];
+                let lastSide = 'right'; // Next side will be 'left'
+                let mIdx = 0;
+                
+                const allUnits = Array.from(new Set(roadmapNodes.map(n => n.unit.id)));
+                
+                allUnits.forEach(unitId => {
+                  const uNodes = roadmapNodes.filter(n => n.unit.id === unitId);
+                  if (uNodes.length > 0) {
+                    lastSide = lastSide === 'left' ? 'right' : 'left';
+                    placements.push({ nodeId: uNodes[0].id, side: lastSide, mIdx: mIdx++ });
+                  }
+                  if (uNodes.length > 4) {
+                    lastSide = lastSide === 'left' ? 'right' : 'left';
+                    placements.push({ nodeId: uNodes[3].id, side: lastSide, mIdx: mIdx++ }); // Place 2nd polaroid on the 4th node of the unit
+                  }
+                });
+
+                return nodeLayout.layout.map((item, idx) => {
+                  if (item.type !== 'node') return null;
+                  
+                  const p = placements.find(x => x.nodeId === item.node.id);
+                  if (!p) return null;
+
+                  const mascots = [
+                    { src: 'dist/assets/sage_roadmap2.gif', text: "Let's do this!", pin: 'bg-rose-500', border: 'border-rose-700' },
+                    { src: 'dist/assets/orin_login.gif', text: "Wise choice! Keep discovering!", pin: 'bg-blue-500', border: 'border-blue-700' },
+                    { src: 'dist/assets/lumi_login.gif', text: "You're shining so bright!", pin: 'bg-amber-500', border: 'border-amber-700' }
+                  ];
+
+                  const mascot = mascots[p.mIdx % mascots.length];
+                  const sideStyle = p.side === 'left' ? { right: 'calc(50% + 11rem)' } : { left: 'calc(50% + 11rem)' };
+                  const rotateClass = p.side === 'left' ? 'rotate-[-4deg]' : 'rotate-[5deg]';
+
+                  return (
+                    <div
+                      key={`mascot-${item.node.id}`}
+                      className={`absolute pointer-events-none z-20 transition-transform duration-500 drop-shadow-lg hidden sm:block ${rotateClass}`}
+                      style={{ ...sideStyle, top: `calc(${item.y}px - 2rem)` }}
+                    >
+                      <div className={`absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full ${mascot.pin} shadow-sm border-b-[1.5px] ${mascot.border} z-30 flex items-start justify-center pt-0.5`}>
+                         <div className="w-1 h-1 rounded-full bg-white/70"></div>
+                      </div>
+                      <div className="bg-white dark:bg-slate-800 p-2 pb-4 rounded-sm shadow-md border border-slate-200 dark:border-slate-700">
+                        <div className="w-28 h-28 bg-slate-200 overflow-hidden border border-slate-300/50 shadow-inner">
+                          <img src={mascot.src} alt="Mascot" className="w-full h-full object-cover object-[center_20%]" />
+                        </div>
+                        <div className="text-center mt-3 font-bold text-slate-700 text-[10px] tracking-wide italic leading-snug break-words px-1 max-w-[7rem]">
+                          {mascot.text}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                });
+            })()}
           </div>
         </div>
-
         {/* ── Sidebar Widgets ── */}
         <div className="space-y-6">
 

@@ -17,11 +17,23 @@ import { useApp } from '../context/AppContext.jsx';
 import { getSortedChapters, getSortedUnits, getSortedSubtopics, getSortedAssets } from '../data/courseData';
 import ChapterCard from './ChapterCard.jsx';
 
-const LEADERBOARD = [
-  { rank: 1, initials: 'AS', name: 'Arjun S.', xp: '12.4k XP', highlight: 'first', avatar: '/assets/avatar1.jpg' },
-  { rank: 2, initials: 'PV', name: 'Priya V.', xp: '11.8k XP', avatar: '/assets/avatar2.jpg' },
-  { rank: 3, initials: 'IM', name: 'Ishaan M.', xp: '11.2k XP', bronze: true, avatar: '/assets/avatar3.jpg' },
-];
+export const LEADERBOARD = {
+  '6': [
+    { rank: 1, initials: 'AS', name: 'Arjun S.', level: 'Lvl 15', xp: '12.4k XP', highlight: 'first', avatar: '/assets/avatar1.jpg' },
+    { rank: 2, initials: 'PV', name: 'Priya V.', level: 'Lvl 14', xp: '11.8k XP', avatar: '/assets/avatar2.jpg' },
+    { rank: 3, initials: 'IM', name: 'Ishaan M.', level: 'Lvl 13', xp: '11.2k XP', bronze: true, avatar: '/assets/avatar3.jpg' },
+  ],
+  '7': [
+    { rank: 1, initials: 'RK', name: 'Rohan K.', level: 'Lvl 20', xp: '15.1k XP', highlight: 'first', avatar: '/assets/avatar3.jpg' },
+    { rank: 2, initials: 'SJ', name: 'Sia J.', level: 'Lvl 19', xp: '14.2k XP', avatar: '/assets/avatar2.jpg' },
+    { rank: 3, initials: 'AK', name: 'Aman K.', level: 'Lvl 18', xp: '13.9k XP', bronze: true, avatar: '/assets/avatar1.jpg' },
+  ],
+  '8': [
+    { rank: 1, initials: 'VM', name: 'Vikram M.', level: 'Lvl 28', xp: '18.4k XP', highlight: 'first', avatar: '/assets/avatar1.jpg' },
+    { rank: 2, initials: 'NT', name: 'Neha T.', level: 'Lvl 27', xp: '17.6k XP', avatar: '/assets/avatar2.jpg' },
+    { rank: 3, initials: 'KS', name: 'Karan S.', level: 'Lvl 26', xp: '16.9k XP', bronze: true, avatar: '/assets/avatar3.jpg' },
+  ]
+};
 
 const ACHIEVEMENTS = [
   {
@@ -69,14 +81,13 @@ const ACHIEVEMENTS = [
 ];
 
 export default function Dashboard() {
-  const { user, chapters, courseData, completedAssetIds, navigateTo, showToast } = useApp();
+  const { user, chapters, courseData, completedAssetIds, navigateTo, showToast, updateProfile, clearAllChatSessions } = useApp();
   const scrollerRef = useRef(null);
 
   // ── Derive active chapter progress dynamically ──────────────────────────
   const { activeChapterLabel, progressPct, labAssets } = useMemo(() => {
-    const sorted = getSortedChapters(courseData);
     // Find the first active or in-progress chapter, else first chapter
-    const active = sorted.find((c) => c.status === 'active') || sorted[0];
+    const active = chapters.find((c) => c.status === 'active') || chapters[0];
     let totalAssets = 0;
     let doneAssets = 0;
     const labs = [];
@@ -99,7 +110,7 @@ export default function Dashboard() {
       progressPct: pct,
       labAssets: labs.slice(0, 2),
     };
-  }, [courseData, completedAssetIds]);
+  }, [chapters, completedAssetIds]);
 
   const scrollChapters = (offset) => {
     scrollerRef.current?.scrollBy({ left: offset, behavior: 'smooth' });
@@ -110,9 +121,22 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-2 bg-gradient-to-r from-purple-700 to-purple-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg shadow-purple-500/20 flex flex-col justify-between">
           <div className="relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold text-white uppercase tracking-wider mb-3 -ml-2">
-              {courseData.title}
-            </span>
+            <select 
+              value={user.grade?.replace('Grade ', '') || '6'}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '6') updateProfile({ name: 'Divya N', grade: 'Grade 6', xp: 2450, streak: 12, levelNumber: 12, email: 'divya@futureminds.demo' });
+                if (v === '7') updateProfile({ name: 'Aryan Patel', grade: 'Grade 7', xp: 5120, streak: 24, levelNumber: 18, email: 'aryan@futureminds.demo' });
+                if (v === '8') updateProfile({ name: 'Kiara Mehta', grade: 'Grade 8', xp: 12050, streak: 45, levelNumber: 26, email: 'kiara@futureminds.demo' });
+                clearAllChatSessions();
+                showToast('Profile Switched', `Loaded student profile for Grade ${v}`, 'info');
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold text-white uppercase tracking-wider mb-3 -ml-2 outline-none cursor-pointer border-none"
+            >
+              <option value="6" className="text-slate-900 bg-white">Grade 6</option>
+              <option value="7" className="text-slate-900 bg-white">Grade 7</option>
+              <option value="8" className="text-slate-900 bg-white">Grade 8</option>
+            </select>
             <h2 className="text-2xl sm:text-3xl font-extrabold font-display">
               Welcome Back, <span className="global-user-name">{user.name.split(' ')[0]}</span>
             </h2>
@@ -154,7 +178,7 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-slate-800 rounded-3xl p-7 shadow-sm border border-purple-100/70 dark:border-slate-700/60 relative flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div className="w-14 h-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-3xl shadow-inner overflow-hidden">
-              <img src='/assets/eli.gif' alt="Elephant" className="w-14 h-14 object-cover" />
+              <img src='/dist/assets/eli_login.gif' alt="Elephant" className="w-14 h-14 object-cover" />
             </div>
             <span className="w-2.5 h-2.5 rounded-full bg-purple-600" />
           </div>
@@ -273,7 +297,7 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/80">
             <h3 className="text-lg font-extrabold text-slate-900 dark:text-white font-display mb-4">Leaderboard</h3>
             <div className="space-y-3">
-              {LEADERBOARD.map((row) => (
+              {LEADERBOARD[user.grade?.replace('Grade ', '') || '6'].map((row) => (
                 <div key={row.rank} className={`flex items-center justify-between p-2 rounded-2xl ${row.highlight === 'first' ? 'bg-purple-50/80 dark:bg-purple-900/20 ring-1 ring-purple-100 dark:ring-purple-800/50' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
                   <div className="flex items-center gap-3">
                     <span className={`text-xs font-black w-4 text-center ${row.rank === 1 ? 'text-amber-500' : row.bronze ? 'text-amber-700' : 'text-slate-400'}`}>{row.rank}</span>
@@ -291,10 +315,14 @@ export default function Dashboard() {
               <div className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/30">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-black w-4 text-center text-slate-400">6</span>
-                  <div className="w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">DN</div>
+                  <div className="w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                  </div>
                   <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{user.name}</span>
                 </div>
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">10.2k XP</span>
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                  {user.xp >= 1000 ? (user.xp / 1000).toFixed(1) + 'k XP' : user.xp + ' XP'}
+                </span>
               </div>
             </div>
           </div>

@@ -16,12 +16,14 @@ import Progress from './components/Progress.jsx';
 import Settings from './components/Settings.jsx';
 import ChapterModal from './components/ChapterModal.jsx';
 import CMS from './components/CMS.jsx';
+import PortalApp, { PORTAL_PAGES } from './portals/PortalApp.jsx';
 
 const AUTH_VIEWS = ['student-login', 'teacher-login', 'parent-login', 'admin-login', 'role-select'];
 
 export default function App() {
   const { currentTheme, currentView, closeDropdowns } = useApp();
   const isAuth = AUTH_VIEWS.includes(currentView);
+  const isPortal = Boolean(PORTAL_PAGES[currentView]);
 
   // Apply dark mode class to root html/body based on currentTheme state
   useEffect(() => {
@@ -69,6 +71,8 @@ export default function App() {
           {currentView === 'role-select' ? <RoleSelect /> : <AuthLogin />}
           <AuthFooter />
         </div>
+      ) : isPortal ? (
+        <PortalApp view={currentView} />
       ) : (
         <div id="app-shell" className="min-h-screen flex flex-col md:flex-row">
           <Sidebar />
@@ -90,3 +94,6 @@ export default function App() {
     </>
   );
 }
+// force reload
+
+// force reload again

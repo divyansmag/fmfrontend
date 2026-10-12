@@ -24,6 +24,20 @@ import {
 
 const AppContext = createContext(null);
 
+const ROLE_PROFILES = {
+  student: { name: 'Divya N', role: 'Student', alias: 'Aanya Sharma' },
+  teacher: { name: 'Anaya Sharma', role: 'Teacher' },
+  parent: { name: 'Priya Sharma', role: 'Parent' },
+  admin: { name: 'System Admin', role: 'Admin' },
+};
+
+const ROLE_HOME = {
+  student: 'dashboard',
+  teacher: 'teacher-dashboard',
+  parent: 'parent-dashboard',
+  admin: 'admin-dashboard',
+};
+
 export function AppProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
@@ -46,7 +60,13 @@ export function AppProvider({ children }) {
     } catch {}
     return 'role-select';
   });
-  const [currentTheme, setCurrentTheme] = useState('light');
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    try {
+      return localStorage.getItem('futureminds_theme_mode') || 'light';
+    } catch {
+      return 'light';
+    }
+  });
   const [video, setVideo] = useState(INITIAL_VIDEO);
   const [aiTutor, setAiTutor] = useState(INITIAL_AI_TUTOR);
   const [toasts, setToasts] = useState([]);
@@ -73,6 +93,12 @@ export function AppProvider({ children }) {
       localStorage.setItem('futureminds_view_v1', currentView);
     } catch { /* ignore quota */ }
   }, [currentView]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('futureminds_theme_mode', currentTheme);
+    } catch { /* ignore quota */ }
+  }, [currentTheme]);
 
   // ─── Course State ────────────────────────────────────────────────────────
   const [courseData, setCourseDataState] = useState(() => loadCourseData());
@@ -116,28 +142,32 @@ export function AppProvider({ children }) {
   }, [completedAssetIds]);
 
   // ─── Derived course objects ───────────────────────────────────────────────
-  const chapters = useMemo(() => getSortedChapters(courseData), [courseData]);
+  const chapters = useMemo(() => {
+    return getSortedChapters(courseData).filter(
+      (c) => (c.grade || '6') === (user.grade?.replace('Grade ', '') || '6')
+    );
+  }, [courseData, user.grade]);
 
   const currentChapter = useMemo(
-    () => findChapter(courseData, currentChapterId),
-    [courseData, currentChapterId]
+    () => chapters.find(c => c.id === currentChapterId) || chapters[0] || courseData.chapters[0],
+    [chapters, currentChapterId, courseData]
   );
   const currentUnit = useMemo(
-    () => findUnit(currentChapter, currentUnitId),
+    () => findUnit(currentChapter, currentUnitId) || currentChapter?.units?.[0],
     [currentChapter, currentUnitId]
   );
   const currentSubtopic = useMemo(
-    () => findSubtopic(currentUnit, currentSubtopicId),
+    () => findSubtopic(currentUnit, currentSubtopicId) || currentUnit?.subtopics?.[0],
     [currentUnit, currentSubtopicId]
   );
   const currentAsset = useMemo(
-    () => findAsset(currentSubtopic, currentAssetId),
+    () => findAsset(currentSubtopic, currentAssetId) || currentSubtopic?.assets?.[0],
     [currentSubtopic, currentAssetId]
   );
 
   const selectedChapter = useMemo(
-    () => findChapter(courseData, selectedChapterId) || courseData.chapters[0],
-    [courseData, selectedChapterId]
+    () => findChapter(courseData, selectedChapterId) || chapters[0] || courseData.chapters[0],
+    [courseData, selectedChapterId, chapters]
   );
 
   // ─── Progress helpers ────────────────────────────────────────────────────
@@ -330,21 +360,35 @@ export function AppProvider({ children }) {
     setTheme(currentTheme === 'dark' ? 'light' : 'dark');
   }, [currentTheme, setTheme]);
 
-  const handleLogin = useCallback((event, email) => {
-    if (event) event.preventDefault();
+  const loginAsRole = useCallback((role, userDetails = {}) => {
+    const profile = ROLE_PROFILES[role] || ROLE_PROFILES.student;
     setUser((prev) => ({
       ...prev,
-      email: email || 'divya@futureminds.demo',
-      name: 'Divya N',
+      ...profile,
+      ...userDetails,
+      role: profile.role,
+      name: userDetails.name || profile.name,
+      email: userDetails.email || `${role}@futureminds.demo`,
     }));
-    showToast('Welcome back, Divya!', 'Successfully signed into FutureMinds', 'success');
-    navigateTo('dashboard');
-  }, [navigateTo, showToast]);
+  }, []);
+
+  const updateProfile = useCallback((updates) => {
+    setUser((prev) => ({ ...prev, ...updates }));
+    showToast('Profile Updated', 'Your details have been successfully saved.', 'success');
+  }, [showToast]);
+
+  const handleLogin = useCallback((event, email, role = 'student') => {
+    if (event) event.preventDefault();
+    const profile = ROLE_PROFILES[role] || ROLE_PROFILES.student;
+    loginAsRole(role, { email: email || `${role}@futureminds.demo` });
+    showToast(`Welcome back, ${profile.name.split(' ')[0]}!`, 'Successfully signed into FutureMinds', 'success');
+    navigateTo(ROLE_HOME[role] || 'dashboard');
+  }, [loginAsRole, navigateTo, showToast]);
 
   const handleLogout = useCallback(() => {
     closeAllModals();
     showToast('Logged Out', 'You have been safely signed out.', 'info');
-    navigateTo('student-login');
+    navigateTo('role-select');
   }, [closeAllModals, navigateTo, showToast]);
 
   const toggleSidebar = useCallback(() => {
@@ -398,7 +442,7 @@ export function AppProvider({ children }) {
   const launchLesson = useCallback((chapterIdOrType, unitIdOrTitle, subtopicId, assetId) => {
     // Legacy call from old code: launchLesson('VIDEO', 'title')
     if (typeof chapterIdOrType === 'string' && !unitIdOrTitle?.startsWith('ch')) {
-      const first = getFirstAsset(courseData, courseData.chapters[0]?.id);
+      const first = getFirstAsset(courseData, chapters[0]?.id);
       if (first) {
         navigateToAsset(first.chapterId, first.unitId, first.subtopicId, first.assetId);
       } else {
@@ -407,7 +451,7 @@ export function AppProvider({ children }) {
       return;
     }
     navigateToAsset(chapterIdOrType, unitIdOrTitle, subtopicId, assetId);
-  }, [courseData, navigateToAsset, navigateTo]);
+  }, [courseData, chapters, navigateToAsset, navigateTo]);
 
   const addXP = useCallback((amount, reason = 'Completed Activity') => {
     setUser((prev) => ({ ...prev, xp: prev.xp + amount }));
@@ -707,7 +751,9 @@ export function AppProvider({ children }) {
       showToast,
       setTheme,
       toggleTheme,
+      updateProfile,
       handleLogin,
+      loginAsRole,
       handleLogout,
       toggleSidebar,
       closeMobileSidebar,
@@ -745,8 +791,8 @@ export function AppProvider({ children }) {
       completedAssetIds, getAssetCompleted, getSubtopicProgress, getUnitProgress, getChapterProgress,
       markAssetCompleteFinal, toggleAssetComplete,
       navigateTo, navigateToAsset, navigateAdjacentAsset,
-      showToast, setTheme, toggleTheme,
-      handleLogin, handleLogout, toggleSidebar, closeMobileSidebar,
+      showToast, setTheme, toggleTheme, updateProfile,
+      handleLogin, loginAsRole, handleLogout, toggleSidebar, closeMobileSidebar,
       toggleProfileDropdown, toggleNotificationDropdown,
       closeDropdowns, closeAllModals,
       openChapterModal, closeChapterModal, selectModalChapter,

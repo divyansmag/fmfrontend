@@ -24,39 +24,37 @@ export const INITIAL_AI_TUTOR = {
   sessions: [
     {
       id: 1,
-      title: 'How Does AI Actually...',
+      title: 'Understanding Neural Networks',
       messages: [
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'When you look at a dog, do you identify the whole image instantly, or do you notice features like ears, eyes, fur, and shape first?' },
-        { sender: 'user', name: 'Madhura', text: 'How does AI recognize images?' },
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'Interesting. If humans recognize features before identifying an object, how might an AI model approach the same problem?' },
+        { sender: 'user', name: 'Divya N', text: 'How does AI recognize images?' },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'Great question! When neural networks learn to see, they extract simple features like edges first. Deeper layers combine these to recognize complex shapes like faces or cars!' },
+        { sender: 'user', name: 'Divya N', text: 'Can you give me an example?' },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'For instance, if an AI is identifying a cat: Layer 1 detects diagonal whiskers; Layer 2 recognizes triangular ears; Layer 3 combines them into a feline face score!' },
       ],
     },
     {
       id: 2,
-      title: 'Difference Between AI...',
+      title: 'AI vs Machine Learning',
       messages: [
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'Welcome back! What would you like to explore today? We can dive into the difference between Artificial Intelligence, Machine Learning, and Deep Learning!' },
+        { sender: 'user', name: 'Divya N', text: 'What is the difference between AI and Machine Learning?' },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'Artificial Intelligence is the broader concept of machines being able to carry out tasks in a way that we would consider "smart". Machine Learning is an application of AI based around the idea that we should just give machines access to data and let them learn for themselves.' },
       ],
     },
     {
       id: 3,
       title: 'Prompt Writing Practice',
       messages: [
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: "Let's practice crafting high-precision prompts for Large Language Models. Try giving me a prompt with a persona, clear task, and constraints!" },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: "Let's practice crafting high-precision prompts for LLMs! Give me a prompt that includes a clear task and a specific persona." },
+        { sender: 'user', name: 'Divya N', text: 'Act as a 6th grade science teacher and explain how photosynthesis works in 3 simple sentences.' },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'Perfect! You assigned a persona (6th grade teacher), a clear task (explain photosynthesis), and a constraint (3 simple sentences). That is a very strong prompt.' },
       ],
     },
     {
       id: 4,
-      title: 'Understanding Neural...',
+      title: 'Math: Activation Functions',
       messages: [
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: 'In artificial neurons, inputs are weighted, summed, and passed through an activation function like ReLU or Sigmoid. Ready for a quick challenge?' },
-      ],
-    },
-    {
-      id: 5,
-      title: 'Can AI Think Like Hum...',
-      messages: [
-        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: "That touches on the classic Turing Test and Searle's Chinese Room argument! What are your thoughts on computational consciousness?" },
+        { sender: 'user', name: 'Divya N', text: 'I am stuck on activation functions. Can you give me a hint on why they are used?' },
+        { sender: 'owl', name: 'Professor Owl', avatar: 'owl', text: '💡 Hint: Without activation functions, a neural network is just a giant linear regression model. Activation functions introduce "non-linearity", which allows the network to learn complex patterns!' },
       ],
     },
   ],
@@ -79,6 +77,16 @@ export const OWL_REPLY_DEFAULT =
 
 export function generateOwlReply(text) {
   const lower = text.toLowerCase();
+  
+  if (lower.includes('hello') || lower.includes('hi ') || lower === 'hi' || lower.includes('hey')) {
+    return "Hello there! 👋 I'm Orin, your AI Tutor. How can I help you with your learning today?";
+  }
+  if (lower.includes('how are you')) {
+    return "I'm just a simulated AI Tutor, but I'm doing perfectly fine! I'm ready to dive into some learning. What's on your mind?";
+  }
+  if (lower.includes('what can you do') || lower.includes('help')) {
+    return "I can answer your questions, give you hints on complex topics, explain things simply, or provide real-world examples! Try asking me about neural networks, math, or tokenization.";
+  }
   if (lower.includes('hint')) {
     return '💡 Hint: Think about how convolutional filters slide across pixels to calculate feature maps. Each filter specializes in detecting a specific pattern!';
   }
@@ -91,5 +99,9 @@ export function generateOwlReply(text) {
   if (lower.includes('token')) {
     return "Tokens are the fundamental building blocks of LLMs! A token can be a single letter, a subword (like 'un' + 'breakable'), or an entire common word.";
   }
-  return OWL_REPLY_DEFAULT;
+  if (lower.includes('quiz') || lower.includes('test')) {
+    return "📝 Pop Quiz! What function is typically used in the hidden layers of a neural network to introduce non-linearity? (Hint: It stands for Rectified Linear Unit)";
+  }
+  
+  return "That's an interesting point! " + OWL_REPLY_DEFAULT;
 }

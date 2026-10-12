@@ -76,7 +76,7 @@ function SubtopicRow({ subtopic, chapterId, unitId, isChapterLocked, defaultOpen
                     : assetIcon(asset.type, 'w-3 h-3')}
                 </div>
                 <span className={`text-[11px] truncate flex-1 ${isActive ? 'font-bold text-purple-700 dark:text-purple-300' : 'font-medium text-slate-700 dark:text-slate-300'}`}>
-                  {asset.title}
+                  {meta.label}
                 </span>
                 {isActive && (
                   <div className="w-1.5 h-1.5 rounded-full bg-purple-600 dark:bg-purple-400 flex-shrink-0" />
@@ -291,7 +291,7 @@ export default function VideoLesson() {
                   </span>
                 </div>
                 <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display truncate">
-                  {currentAsset.title}
+                  {ASSET_META[currentAsset.type]?.label || currentAsset.type}
                 </h1>
               </div>
 
