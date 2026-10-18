@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from '../../nav.jsx';
 import {
   LayoutGrid,
   TrendingUp,
+  Users,
   Settings,
   HelpCircle,
   LogOut,
@@ -37,6 +38,12 @@ export const AdminSidebar = () => {
     label: 'Dashboard',
     path: '/admin/dashboard',
     icon: LayoutGrid
+  },
+  {
+    id: 'users',
+    label: 'Manage Users',
+    path: '/admin/users',
+    icon: Users
   },
   {
     id: 'platform-progress',

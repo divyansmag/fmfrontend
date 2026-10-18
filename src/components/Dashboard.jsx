@@ -1,9 +1,9 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import {
   Atom,
-  Calendar,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   Compass,
   Flame,
   FlaskConical,
@@ -12,10 +12,13 @@ import {
   ShieldCheck,
   Sparkles,
   PartyPopper,
+  UploadCloud,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { getSortedChapters, getSortedUnits, getSortedSubtopics, getSortedAssets } from '../data/courseData';
 import ChapterCard from './ChapterCard.jsx';
+import AssignmentModal from './AssignmentModal.jsx';
+import AllAssignmentsModal from './AllAssignmentsModal.jsx';
 
 export const LEADERBOARD = {
   '6': [
@@ -80,9 +83,93 @@ const ACHIEVEMENTS = [
   },
 ];
 
+const INITIAL_ASSIGNMENTS = [
+  {
+    id: 'asg-1',
+    title: 'Neural Networks Project',
+    module: 'Unit 1 Capstone',
+    xp: 100,
+    dueDate: 'Fri 11:59 PM',
+    dueStatus: 'Due Soon',
+    dueUrgent: true,
+    description: 'Build and train a 2-layer perceptron neural network model on synthetic datasets. Submit your Python script (.py) or Jupyter notebook (.ipynb) along with accuracy evaluation curves.',
+    status: 'pending',
+  },
+  {
+    id: 'asg-2',
+    title: 'Computer Vision Challenge',
+    module: 'Module 02 • In 2 days',
+    xp: 80,
+    dueDate: 'Wednesday',
+    dueStatus: 'Upcoming',
+    dueUrgent: false,
+    description: 'Implement Sobel and Laplacian edge detection filters and test on sample high-resolution images. Upload your code files and output comparisons in a ZIP or notebook.',
+    status: 'pending',
+  },
+  {
+    id: 'asg-3',
+    title: 'Prompt Engineering Capstone',
+    module: 'Unit 2 Capstone • Next Week',
+    xp: 90,
+    dueDate: 'Next Monday',
+    dueStatus: 'Upcoming',
+    dueUrgent: false,
+    description: 'Design few-shot and chain-of-thought prompts to solve multi-step reasoning puzzles. Submit your prompt logs, outputs, and reflection report.',
+    status: 'pending',
+  },
+  {
+    id: 'asg-4',
+    title: 'NLP Sentiment Classifier',
+    module: 'Module 03 • Advanced',
+    xp: 120,
+    dueDate: 'In 2 weeks',
+    dueStatus: 'Upcoming',
+    dueUrgent: false,
+    description: 'Train a Naive Bayes or Transformer classifier to detect sentiment in student course reviews with >=85% accuracy.',
+    status: 'pending',
+  },
+];
+
 export default function Dashboard() {
   const { user, chapters, courseData, completedAssetIds, navigateTo, showToast, updateProfile, clearAllChatSessions } = useApp();
   const scrollerRef = useRef(null);
+  const [assignments, setAssignments] = useState(() => {
+    try {
+      const saved = localStorage.getItem('futureminds_assignments_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 2) return parsed;
+      }
+      return INITIAL_ASSIGNMENTS;
+    } catch {
+      return INITIAL_ASSIGNMENTS;
+    }
+  });
+  const [activeAssignmentModal, setActiveAssignmentModal] = useState(null);
+  const [allAssignmentsOpen, setAllAssignmentsOpen] = useState(false);
+
+  const handleSubmitAssignment = (assignmentId, submissionData) => {
+    setAssignments((prev) => {
+      const next = prev.map((item) =>
+        item.id === assignmentId
+          ? {
+              ...item,
+              status: 'submitted',
+              submission: submissionData,
+            }
+          : item
+      );
+      try {
+        localStorage.setItem('futureminds_assignments_v1', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    showToast('Assignment Submitted', `"${submissionData.fileName}" submitted successfully (+100 XP)`, 'success');
+  };
+
+  const openAssignmentModal = (assignment) => {
+    setActiveAssignmentModal(assignment);
+  };
 
   // ── Derive active chapter progress dynamically ──────────────────────────
   const { activeChapterLabel, progressPct, labAssets } = useMemo(() => {
@@ -121,7 +208,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-2 bg-gradient-to-r from-purple-700 to-purple-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg shadow-purple-500/20 flex flex-col justify-between">
           <div className="relative z-10">
-            <select 
+            <select
               value={user.grade?.replace('Grade ', '') || '6'}
               onChange={(e) => {
                 const v = e.target.value;
@@ -251,43 +338,90 @@ export default function Dashboard() {
 
             <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-inner border border-slate-200 dark:border-slate-700">
-                    <Calendar className="w-4 h-4" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-inner border border-blue-200/50 dark:border-blue-800/40">
+                      <ClipboardList className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Assignments</h4>
                   </div>
-                  <h4 className="font-bold text-slate-900 dark:text-white text-sm">Schedule</h4>
+                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    {assignments.filter(a => a.status === 'submitted').length}/{assignments.length} SUBMITTED
+                  </span>
                 </div>
                 <div className="space-y-3">
-                  <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                    <div className="flex items-center justify-between text-[10px] font-bold mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                        <span className="text-blue-600 dark:text-blue-400 uppercase tracking-wider">Due Soon</span>
+                  {assignments.slice(0, 2).map((item) => {
+                    const isSubmitted = item.status === 'submitted';
+                    return (
+                      <div
+                        key={item.id}
+                        id={`assignment-item-${item.id}`}
+                        onClick={() => openAssignmentModal(item)}
+                        className={`p-3 rounded-2xl border transition-all cursor-pointer group ${
+                          isSubmitted
+                            ? 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/20 hover:bg-emerald-50/80'
+                            : item.dueUrgent
+                              ? 'border-blue-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50/40 dark:hover:bg-slate-700/50'
+                              : 'border-slate-100 dark:border-slate-700/50 bg-white dark:bg-slate-800/20 hover:bg-slate-50 dark:hover:bg-slate-700/30'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-bold mb-1.5">
+                          {isSubmitted ? (
+                            <div className="flex items-center gap-1.5">
+                              <span className="relative flex h-2 w-2">
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                              </span>
+                              <span className="text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Submitted</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              {item.dueUrgent ? (
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                              ) : (
+                                <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                              )}
+                              <span className={item.dueUrgent ? 'text-blue-600 dark:text-blue-400 uppercase tracking-wider' : 'text-slate-500 uppercase tracking-wider'}>
+                                {item.dueStatus}
+                              </span>
+                            </div>
+                          )}
+                          <span className={isSubmitted ? 'text-emerald-600 dark:text-emerald-400' : item.dueUrgent ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}>
+                            {isSubmitted ? 'Under Review' : item.dueDate}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className={`text-xs font-bold ${isSubmitted ? 'text-slate-800 dark:text-slate-200' : 'text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors'}`}>
+                              {item.title}
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-0.5">
+                              {item.module} • {item.xp} XP
+                            </div>
+                          </div>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-xl transition-all ${
+                            isSubmitted
+                              ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                              : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white'
+                          }`}>
+                            {isSubmitted ? 'View / Resubmit' : 'Upload & Submit →'}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-blue-600 dark:text-blue-400">Fri 11:59 PM</span>
-                    </div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Neural Networks Project</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Unit 1 Capstone</div>
-                  </div>
-                  <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-700/50 bg-white dark:bg-slate-800/20">
-                    <div className="flex items-center justify-between text-[10px] font-bold mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-                        <span className="text-slate-500 uppercase tracking-wider">Upcoming</span>
-                      </div>
-                      <span className="text-slate-400">Wednesday</span>
-                    </div>
-                    <div className="text-xs font-bold text-slate-700 dark:text-slate-300">Neural Networks Project</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">Module 02 • In 2 days</div>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
-              <button type="button" onClick={() => window.open('https://calendar.google.com/', '_blank', 'noopener,noreferrer')} className="w-full mt-4 py-2.5 rounded-2xl bg-blue-600 dark:bg-blue-700 text-white font-bold text-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>OPEN CALENDAR</span>
+              <button
+                id="btn-view-all-assignments"
+                type="button"
+                onClick={() => setAllAssignmentsOpen(true)}
+                className="w-full mt-4 py-2.5 rounded-2xl bg-blue-600 dark:bg-blue-700 text-white font-bold text-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-sm hover:scale-[1.01] active:scale-100"
+              >
+                <ClipboardList className="w-3.5 h-3.5" />
+                <span>VIEW ALL ASSIGNMENTS</span>
               </button>
             </div>
           </div>
@@ -350,6 +484,22 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Assignment Upload & Submission Modal */}
+      <AssignmentModal
+        isOpen={Boolean(activeAssignmentModal)}
+        assignment={activeAssignmentModal}
+        onClose={() => setActiveAssignmentModal(null)}
+        onSubmitAssignment={handleSubmitAssignment}
+      />
+
+      {/* All Assignments Popup Modal */}
+      <AllAssignmentsModal
+        isOpen={allAssignmentsOpen}
+        onClose={() => setAllAssignmentsOpen(false)}
+        assignments={assignments}
+        onOpenSubmission={(asg) => setActiveAssignmentModal(asg)}
+      />
     </main>
   );
 }

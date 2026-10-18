@@ -36,6 +36,28 @@ export const DashboardHeader = () => {
         </Link>
 
         <Link
+          to="/teacher/assignments"
+          className={`transition-colors ${
+          location.pathname === '/teacher/assignments' ?
+          'relative text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-emerald-600 dark:after:bg-emerald-400 after:rounded-full' :
+          'relative text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-300 pb-1 transition-colors'}`
+          }>
+          
+          Assignments
+        </Link>
+
+        <Link
+          to="/teacher/announcements"
+          className={`transition-colors ${
+          location.pathname === '/teacher/announcements' ?
+          'relative text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-emerald-600 dark:after:bg-emerald-400 after:rounded-full' :
+          'relative text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-300 pb-1 transition-colors'}`
+          }>
+          
+          Announcements
+        </Link>
+
+        <Link
           to="/teacher/student-progress"
           className={`transition-colors ${
           location.pathname === '/teacher/student-progress' ?

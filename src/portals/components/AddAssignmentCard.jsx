@@ -115,10 +115,10 @@ export const AddAssignmentCard = () => {
       <div className="mt-6 text-center">
         <button
           type="button"
-          onClick={() => navigate('/teacher/student-progress')}
+          onClick={() => navigate('/teacher/assignments')}
           className="inline-flex items-center space-x-1 text-xs sm:text-sm font-semibold text-[#16b364] hover:text-[#139c56] transition-colors cursor-pointer">
           
-          <span>View All Assignments</span>
+          <span>View All Assignments & Upload Materials</span>
           <ArrowRight className="w-3.5 h-3.5 stroke-[2.2]" />
         </button>
       </div>

@@ -1,12 +1,10 @@
 import React from 'react';
-import { Building2 } from 'lucide-react';
-
-
-
-
-
+import { Building2, UserPlus } from 'lucide-react';
+import { useNavigate } from '../../nav.jsx';
 
 export const PlatformSummaryCard = ({ info }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 border border-gray-200/70 dark:border-slate-700/80 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors">
       {/* Left Details */}
@@ -35,6 +33,15 @@ export const PlatformSummaryCard = ({ info }) => {
           </p>
         </div>
       </div>
-    </div>);
 
+      {/* Right Quick Action: Provision users */}
+      <button
+        onClick={() => navigate('/admin/users')}
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#ff8a00] hover:bg-[#e67a00] text-white font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer transform active:scale-95"
+      >
+        <UserPlus className="w-4 h-4" />
+        <span>Add Students & Teachers</span>
+      </button>
+    </div>
+  );
 };

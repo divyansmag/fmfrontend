@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from '../nav.jsx';
 import {
   LayoutGrid,
   TrendingUp,
+  ClipboardList,
+  Megaphone,
   Settings,
   HelpCircle,
   LogOut,
@@ -38,6 +40,18 @@ export const Sidebar = () => {
     label: 'Dashboard',
     path: '/teacher/dashboard',
     icon: LayoutGrid
+  },
+  {
+    id: 'assignments',
+    label: 'Assignments',
+    path: '/teacher/assignments',
+    icon: ClipboardList
+  },
+  {
+    id: 'announcements',
+    label: 'Announcements',
+    path: '/teacher/announcements',
+    icon: Megaphone
   },
   {
     id: 'student-progress',

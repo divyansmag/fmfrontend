@@ -209,6 +209,45 @@ export const adminPortalData = {
   { id: 'ss1', service: 'Platform', description: 'Core platform services and application', status: 'Operational' },
   { id: 'ss2', service: 'Database', description: 'Data storage and management', status: 'Operational' },
   { id: 'ss3', service: 'Authentication', description: 'User authentication and security', status: 'Operational' },
-  { id: 'ss4', service: 'Notifications', description: 'Email and system notifications', status: 'Operational' }]
+  { id: 'ss4', service: 'Notifications', description: 'Email and system notifications', status: 'Operational' }],
+
+  // Detailed analytics & chart datasets
+  userDistribution: [
+    { name: 'Students', value: 1248, fill: '#ff8a00', percentage: '53.1%' },
+    { name: 'Parents', value: 1016, fill: '#10b981', percentage: '43.2%' },
+    { name: 'Teachers', value: 86, fill: '#3b82f6', percentage: '3.7%' }
+  ],
+
+  departmentEnrollments: [
+    { subject: 'AI & Robotics', enrolled: 420, capacity: 500, completionRate: 88 },
+    { subject: 'Computer Sci', enrolled: 385, capacity: 450, completionRate: 82 },
+    { subject: 'Mathematics', enrolled: 310, capacity: 350, completionRate: 79 },
+    { subject: 'Science & Lab', enrolled: 275, capacity: 320, completionRate: 85 },
+    { subject: 'Design & Arts', enrolled: 195, capacity: 250, completionRate: 91 }
+  ],
+
+  gradeEngagementComparison: [
+    { grade: 'Grade 6', activeStudents: 280, completionScore: 78, avgHours: 14 },
+    { grade: 'Grade 7', activeStudents: 315, completionScore: 84, avgHours: 18 },
+    { grade: 'Grade 8', activeStudents: 340, completionScore: 89, avgHours: 21 },
+    { grade: 'Grade 9', activeStudents: 313, completionScore: 85, avgHours: 19 }
+  ],
+
+  weeklyRoleTraffic: [
+    { day: 'Mon', Students: 980, Teachers: 82, Parents: 450 },
+    { day: 'Tue', Students: 1120, Teachers: 84, Parents: 520 },
+    { day: 'Wed', Students: 1180, Teachers: 86, Parents: 610 },
+    { day: 'Thu', Students: 1090, Teachers: 83, Parents: 580 },
+    { day: 'Fri', Students: 1240, Teachers: 85, Parents: 690 },
+    { day: 'Sat', Students: 740, Teachers: 42, Parents: 840 },
+    { day: 'Sun', Students: 620, Teachers: 38, Parents: 790 }
+  ],
+
+  systemHealthMetrics: [
+    { metric: 'API Response', value: '142ms', status: 'optimal', score: 98, target: '< 200ms' },
+    { metric: 'Database Load', value: '34%', status: 'optimal', score: 92, target: '< 70%' },
+    { metric: 'Storage Utilized', value: '1.2 TB / 2 TB', status: 'normal', score: 60, target: '60%' },
+    { metric: 'Active Sessions', value: '1,894', status: 'high', score: 85, target: '2.5k peak' }
+  ]
 
 };

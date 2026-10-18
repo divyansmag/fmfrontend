@@ -31,8 +31,17 @@ export const AdminHeader = () => {
           'relative text-xs sm:text-sm font-bold text-orange-500 dark:text-orange-400 pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-orange-500 dark:after:bg-orange-400 after:rounded-full' :
           'relative text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 pb-1 transition-colors'}`
           }>
-          
           Dashboard
+        </Link>
+
+        <Link
+          to="/admin/users"
+          className={`transition-colors ${
+          location.pathname === '/admin/users' ?
+          'relative text-xs sm:text-sm font-bold text-orange-500 dark:text-orange-400 pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-orange-500 dark:after:bg-orange-400 after:rounded-full' :
+          'relative text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 pb-1 transition-colors'}`
+          }>
+          Manage Users
         </Link>
 
         <Link
@@ -42,7 +51,6 @@ export const AdminHeader = () => {
           'relative text-xs sm:text-sm font-bold text-orange-500 dark:text-orange-400 pb-1 after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-orange-500 dark:after:bg-orange-400 after:rounded-full' :
           'relative text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 pb-1 transition-colors'}`
           }>
-          
           Platform Progress
         </Link>
 
