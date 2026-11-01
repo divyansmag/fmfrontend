@@ -19,9 +19,9 @@ export default function AuthLogin() {
     teacher: {
       title: 'Teacher',
       placeholder: 'Email / Teacher ID',
-      image: '/dist/assets/sage_login.gif',
+      image: '/dist/sage_login.gif',
       theme: 'emerald',
-      imgClass: 'scale-[1.65] origin-[50%_30%]',
+      imgClass: 'scale-[1.25]',
     },
     parent: {
       title: 'Parent',
@@ -33,7 +33,7 @@ export default function AuthLogin() {
     admin: {
       title: 'Admin',
       placeholder: 'Admin Email',
-      image: '/dist/assets/orin_login.gif',
+      image: '/dist/orin_login.gif',
       theme: 'amber',
       imgClass: '-scale-x-100',
     }

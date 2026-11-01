@@ -487,12 +487,26 @@ export default function Roadmap2() {
                   if (!p) return null;
 
                   const mascots = [
-                    { src: 'dist/assets/sage_roadmap2.gif', text: "Let's do this!", pin: 'bg-rose-500', border: 'border-rose-700' },
-                    { src: 'dist/assets/orin_login.gif', text: "Wise choice! Keep discovering!", pin: 'bg-blue-500', border: 'border-blue-700' },
-                    { src: 'dist/assets/lumi_login.gif', text: "You're shining so bright!", pin: 'bg-amber-500', border: 'border-amber-700' }
+                    { src: 'dist/assets/sage_roadmap2.gif', pin: 'bg-rose-500', border: 'border-rose-700' },
+                    { src: 'dist/assets/orin_login.gif', pin: 'bg-blue-500', border: 'border-blue-700' },
+                    { src: '/lumi_roadmap2.gif?v=2', pin: 'bg-amber-500', border: 'border-amber-700' },
+                    { src: 'dist/assets/eli_roadmap2.gif', pin: 'bg-purple-500', border: 'border-purple-700' }
+                  ];
+                  const captions = [
+                    "Let's do this!",
+                    "Wise choice! Keep discovering!",
+                    "Just read something amazing!",
+                    "Keep going, you've got this!",
+                    "Every step makes you smarter!",
+                    "Believe in your big ideas!",
+                    "Every page sparks a new idea!",
+                    "Awesome progress! Keep it up!"
                   ];
 
-                  const mascot = mascots[p.mIdx % mascots.length];
+                  const mascot = {
+                    ...mascots[p.mIdx % mascots.length],
+                    text: captions[p.mIdx % captions.length]
+                  };
                   const sideStyle = p.side === 'left' ? { right: 'calc(50% + 11rem)' } : { left: 'calc(50% + 11rem)' };
                   const rotateClass = p.side === 'left' ? 'rotate-[-4deg]' : 'rotate-[5deg]';
 

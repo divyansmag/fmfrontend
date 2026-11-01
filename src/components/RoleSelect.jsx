@@ -12,13 +12,13 @@ const ROLES = [
   },
   {
     id: 'teacher',
-    image: '/dist/assets/sage_login.gif',
+    image: '/dist/sage_login.gif',
     title: 'Teacher',
     desc: 'Manage your curriculum, grade submissions, and interact with your students.',
     border: 'border-emerald-100 dark:border-slate-700/60',
     avatar: 'bg-emerald-100 dark:bg-emerald-900/30 overflow-hidden',
     button: 'bg-emerald-600 shadow-emerald-600/30 hover:bg-emerald-700',
-    imgClass: 'scale-[1.65] origin-[50%_30%]',
+    imgClass: 'scale-[1.25]',
   },
   {
     id: 'parent',
@@ -31,7 +31,7 @@ const ROLES = [
   },
   {
     id: 'admin',
-    image: '/dist/assets/orin_login.gif',
+    image: '/dist/orin_login.gif',
     title: 'Admin',
     desc: 'Configure institutional settings, manage user accounts, and view analytics.',
     border: 'border-amber-100 dark:border-slate-700/60',

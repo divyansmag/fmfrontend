@@ -1,29 +1,53 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useApp } from './context/AppContext.jsx';
 import Toast from './components/Toast.jsx';
 import AuthHeader from './components/AuthHeader.jsx';
 import AuthFooter from './components/AuthFooter.jsx';
 import RoleSelect from './components/RoleSelect.jsx';
 import AuthLogin from './components/AuthLogin.jsx';
-import Sidebar from './components/Sidebar.jsx';
-import Header from './components/Header.jsx';
-import Dashboard from './components/Dashboard.jsx';
-import Roadmap1 from './components/Roadmap1.jsx';
-import Roadmap2 from './components/Roadmap2.jsx';
-import VideoLesson from './components/VideoLesson.jsx';
-import AITutor from './components/AITutor.jsx';
-import Progress from './components/Progress.jsx';
-import Settings from './components/Settings.jsx';
-import ChapterModal from './components/ChapterModal.jsx';
-import CMS from './components/CMS.jsx';
-import PortalApp, { PORTAL_PAGES } from './portals/PortalApp.jsx';
+
+// Lazy-load non-auth views so login and role-select load instantly without compiling 2,000+ modules
+const Sidebar = lazy(() => import('./components/Sidebar.jsx'));
+const Header = lazy(() => import('./components/Header.jsx'));
+const Dashboard = lazy(() => import('./components/Dashboard.jsx'));
+const Roadmap1 = lazy(() => import('./components/Roadmap1.jsx'));
+const Roadmap2 = lazy(() => import('./components/Roadmap2.jsx'));
+const VideoLesson = lazy(() => import('./components/VideoLesson.jsx'));
+const AITutor = lazy(() => import('./components/AITutor.jsx'));
+const Progress = lazy(() => import('./components/Progress.jsx'));
+const Settings = lazy(() => import('./components/Settings.jsx'));
+const ChapterModal = lazy(() => import('./components/ChapterModal.jsx'));
+const CMS = lazy(() => import('./components/CMS.jsx'));
+const PortalApp = lazy(() => import('./portals/PortalApp.jsx'));
 
 const AUTH_VIEWS = ['student-login', 'teacher-login', 'parent-login', 'admin-login', 'role-select'];
+
+const PORTAL_VIEWS = new Set([
+  'teacher-dashboard',
+  'teacher-assignments',
+  'teacher-announcements',
+  'teacher-progress',
+  'teacher-settings',
+  'teacher-lab-guide',
+  'parent-dashboard',
+  'parent-progress',
+  'parent-settings',
+  'admin-dashboard',
+  'admin-users',
+  'admin-progress',
+  'admin-settings',
+]);
+
+const PageLoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#F8F9FD] dark:bg-[#0F172A]">
+    <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+  </div>
+);
 
 export default function App() {
   const { currentTheme, currentView, closeDropdowns } = useApp();
   const isAuth = AUTH_VIEWS.includes(currentView);
-  const isPortal = Boolean(PORTAL_PAGES[currentView]);
+  const isPortal = PORTAL_VIEWS.has(currentView);
 
   // Apply dark mode class to root html/body based on currentTheme state
   useEffect(() => {
@@ -72,25 +96,28 @@ export default function App() {
           <AuthFooter />
         </div>
       ) : isPortal ? (
-        <PortalApp view={currentView} />
+        <Suspense fallback={<PageLoadingFallback />}>
+          <PortalApp view={currentView} />
+        </Suspense>
       ) : (
-        <div id="app-shell" className="min-h-screen flex flex-col md:flex-row">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FD] dark:bg-[#0F172A]">
-            <Header />
-            {currentView === 'dashboard' && <Dashboard />}
-            {currentView === 'roadmap-1' && <Roadmap1 />}
-            {currentView === 'roadmap-2' && <Roadmap2 />}
-            {currentView === 'video' && <VideoLesson />}
-            {currentView === 'ai-tutor' && <AITutor />}
-            {currentView === 'progress' && <Progress />}
-            {currentView === 'settings' && <Settings />}
-            {currentView === 'cms' && <CMS />}
+        <Suspense fallback={<PageLoadingFallback />}>
+          <div id="app-shell" className="min-h-screen flex flex-col md:flex-row">
+            <Sidebar />
+            <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FD] dark:bg-[#0F172A]">
+              <Header />
+              {currentView === 'dashboard' && <Dashboard />}
+              {currentView === 'roadmap-1' && <Roadmap1 />}
+              {currentView === 'roadmap-2' && <Roadmap2 />}
+              {currentView === 'video' && <VideoLesson />}
+              {currentView === 'ai-tutor' && <AITutor />}
+              {currentView === 'progress' && <Progress />}
+              {currentView === 'settings' && <Settings />}
+              {currentView === 'cms' && <CMS />}
+            </div>
           </div>
-        </div>
+          <ChapterModal />
+        </Suspense>
       )}
-
-      <ChapterModal />
     </>
   );
 }

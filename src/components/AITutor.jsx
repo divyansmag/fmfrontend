@@ -33,7 +33,7 @@ export default function AITutor() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 h-full min-h-0 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
         <div className="p-5 border-r border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between h-full min-h-0 bg-slate-50/50 dark:bg-slate-900/40 overflow-hidden">
           <div className="space-y-4 flex flex-col flex-1 min-h-0 overflow-hidden">
-            <button type="button" onClick={createNewSession} className="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/25 transition-all flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer">
+            <button type="button" onClick={createNewSession} className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer">
               <Plus className="w-4 h-4" />
               <span>New Session</span>
             </button>
@@ -45,7 +45,7 @@ export default function AITutor() {
                 value={aiSearchQuery}
                 onChange={(event) => setAiSearchQuery(event.target.value)}
                 placeholder="Search conversations..."
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-purple-600 text-slate-800 dark:text-slate-200"
+                className="w-full pl-8 pr-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-600 text-slate-800 dark:text-slate-200"
               />
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" />
             </div>
@@ -70,8 +70,8 @@ export default function AITutor() {
                       <div
                         key={session.id}
                         className={`group relative flex items-center justify-between rounded-xl transition-all ${isActive
-                          ? 'bg-purple-600 text-white font-semibold shadow-sm'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-800'
+                          ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800'
                           }`}
                       >
                         <button type="button" onClick={() => selectChatSession(session.id)} className="flex-1 text-left px-3 py-2.5 text-xs flex items-center gap-2 truncate cursor-pointer">
@@ -99,9 +99,9 @@ export default function AITutor() {
           <div id="ai-messages-stream" ref={streamRef} className="flex-1 overflow-y-auto py-5 space-y-5 pr-2 min-h-0">
             {!currentSession || !currentSession.messages || currentSession.messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
-                <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center overflow-hidden shadow-inner">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center overflow-hidden shadow-inner">
                   <img
-                    src="dist/assets/orin_aitutor.jpg"
+                    src="/dist/assets/orin_aitutor.jpg"
                     alt="Orin"
                     className="w-full h-full object-cover"
                   />
@@ -121,15 +121,15 @@ export default function AITutor() {
                       </button>
                       <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{user.name}</span>
                     </div>
-                    <div className="bg-purple-600 text-white rounded-3xl rounded-tr-sm px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-purple-600/20 whitespace-pre-wrap break-words">
+                    <div className="bg-emerald-600 text-white rounded-3xl rounded-tr-sm px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-emerald-600/20 whitespace-pre-wrap break-words">
                       {message.text}
                     </div>
                   </div>
                 ) : (
                   <div key={`${message.sender}-${index}`} className="group relative flex items-start gap-3.5 max-w-2xl">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
                       <img
-                        src="dist/assets/orin_aitutor.jpg"
+                        src="/dist/assets/orin_aitutor.jpg"
                         alt="Orin"
                         className="w-full h-full object-cover"
                       />
@@ -141,7 +141,7 @@ export default function AITutor() {
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      <div className="bg-purple-50 dark:bg-purple-950/50 border border-purple-100 dark:border-purple-900/60 rounded-3xl rounded-tl-sm px-5 py-3.5 text-sm text-slate-800 dark:text-slate-200 leading-relaxed shadow-sm whitespace-pre-wrap break-words">
+                      <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200/80 dark:border-slate-600/60 rounded-3xl rounded-tl-sm px-5 py-3.5 text-sm text-slate-800 dark:text-slate-200 leading-relaxed shadow-sm whitespace-pre-wrap break-words">
                         {message.text}
                       </div>
                     </div>
@@ -152,17 +152,17 @@ export default function AITutor() {
 
             {aiTutor.isTyping && (
               <div id="ai-typing-indicator" className="flex items-start gap-3.5 max-w-2xl">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex-shrink-0 overflow-hidden shadow-sm flex items-center justify-center">
                   <img
-                    src="/assets/orin.jpeg"
+                    src="/dist/assets/orin_aitutor.jpg"
                     alt="Orin"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="bg-purple-50 dark:bg-purple-950/50 border border-purple-100 dark:border-purple-900/60 rounded-3xl rounded-tl-sm px-5 py-3.5 text-sm flex items-center gap-1.5 shadow-sm">
-                  <span className="w-2 h-2 rounded-full bg-purple-600 typing-dot" />
-                  <span className="w-2 h-2 rounded-full bg-purple-600 typing-dot" />
-                  <span className="w-2 h-2 rounded-full bg-purple-600 typing-dot" />
+                <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200/80 dark:border-slate-600/60 rounded-3xl rounded-tl-sm px-5 py-3.5 text-sm flex items-center gap-1.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 typing-dot" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 typing-dot" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 typing-dot" />
                 </div>
               </div>
             )}
@@ -170,25 +170,25 @@ export default function AITutor() {
 
           <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-700 flex-shrink-0">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-              <button type="button" onClick={() => sendAiMessage('Give me a quick hint on how activation functions work!')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/40 dark:hover:text-purple-300 font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
+              <button type="button" onClick={() => sendAiMessage('Give me a quick hint on how activation functions work!')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
                 Hint
               </button>
-              <button type="button" onClick={() => sendAiMessage('Can you explain this simpler like I am in 6th grade?')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/40 dark:hover:text-purple-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
+              <button type="button" onClick={() => sendAiMessage('Can you explain this simpler like I am in 6th grade?')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
                 Explain Simpler
               </button>
-              <button type="button" onClick={() => sendAiMessage('Please provide a real-world example of word tokenization.')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/40 dark:hover:text-purple-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
+              <button type="button" onClick={() => sendAiMessage('Please provide a real-world example of word tokenization.')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
                 Give Example
               </button>
-              <button type="button" onClick={() => sendAiMessage('Test me with a 1-question quiz on neural weights!')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/40 dark:hover:text-purple-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
+              <button type="button" onClick={() => sendAiMessage('Test me with a 1-question quiz on neural weights!')} className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 font-semibold transition-all whitespace-nowrap cursor-pointer">
                 Quiz Me
               </button>
             </div>
 
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 px-3 shadow-inner">
-              <button type="button" onClick={() => showToast('Microphone', 'Voice input listening...', 'info')} className="p-2 rounded-xl text-slate-400 hover:text-purple-600 transition-colors cursor-pointer">
+              <button type="button" onClick={() => showToast('Microphone', 'Voice input listening...', 'info')} className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer">
                 <Mic className="w-5 h-5" />
               </button>
-              <button type="button" onClick={() => showToast('Attachment', 'Image attachment supported (PNG, JPG)', 'info')} className="p-2 rounded-xl text-slate-400 hover:text-purple-600 transition-colors cursor-pointer">
+              <button type="button" onClick={() => showToast('Attachment', 'Image attachment supported (PNG, JPG)', 'info')} className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer">
                 <Image className="w-5 h-5" />
               </button>
               <input
@@ -202,7 +202,7 @@ export default function AITutor() {
                 placeholder="Ask Orin something, or say 'give me a hint'"
                 className="flex-1 bg-transparent text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
               />
-              <button type="button" onClick={() => sendAiMessage()} className="w-10 h-10 rounded-xl bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center shadow-md shadow-purple-600/30 transition-all cursor-pointer">
+              <button type="button" onClick={() => sendAiMessage()} className="w-10 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 transition-all cursor-pointer">
                 <Send className="w-4 h-4" />
               </button>
             </div>

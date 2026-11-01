@@ -12,7 +12,6 @@ import {
 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-import fmLogo from '../../assets/fm_logo.png';
 
 export const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -73,17 +72,16 @@ export const AdminSidebar = () => {
             className="w-10 h-10 flex items-center justify-center cursor-pointer mx-auto"
             title="FutureMinds AI Admin Portal">
             
-              <img
-              src={fmLogo}
+              <img src="/dist/assets/fm_logo.png"
               alt="FutureMinds AI Labs"
-              className="w-9 h-9 object-contain" />
+              className="w-9 h-9 object-contain dark:brightness-125 dark:contrast-125 dark:saturate-150 dark:drop-shadow-[0_0_6px_rgba(255,255,255,0.45)]" />
             
             </div> :
 
           <div
             onClick={() => navigate('/admin/dashboard')}
             className="flex items-center gap-3 cursor-pointer overflow-hidden">
-              <img src={fmLogo} alt="FutureMinds Logo" className="w-10 h-10 object-contain flex-shrink-0" />
+              <img src="/dist/assets/fm_logo.png" alt="FutureMinds Logo" className="w-10 h-10 object-contain flex-shrink-0 dark:brightness-125 dark:contrast-125 dark:saturate-150 dark:drop-shadow-[0_0_6px_rgba(255,255,255,0.45)]" />
               <div className="sidebar-brand-text">
                 <div className="text-lg font-extrabold text-[#ff8a00] dark:text-[#f97316] font-display leading-tight">FutureMinds</div>
                 <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">MYAIGURU</div>

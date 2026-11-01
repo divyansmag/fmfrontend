@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FutureMinds — Next-Gen AI Learning Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  </head>
+  <body class="bg-[#F8F9FD] dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-purple-500 selection:text-white">
+    <div id="root">
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, rgba(243, 232, 255, 0.6), #ffffff, rgba(243, 232, 255, 0.4)); font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;">
+        <div style="position: relative; width: 64px; height: 64px; margin-bottom: 20px;">
+          <div style="position: absolute; inset: 0; border: 4px solid #ede9fe; border-top-color: #7c3aed; border-radius: 50%; animation: fm-spin 0.8s linear infinite;"></div>
+          <div style="position: absolute; inset: 8px; border: 3px solid transparent; border-bottom-color: #9333ea; border-radius: 50%; animation: fm-spin 1.2s linear infinite reverse;"></div>
+          <img src="/dist/assets/fm_logo.png" alt="Loading..." style="position: absolute; inset: 0; margin: auto; width: 28px; height: 28px; object-fit: contain;" />
+        </div>
+        <div style="font-weight: 800; font-size: 19px; color: #6d28d9; letter-spacing: -0.02em;">FutureMinds</div>
+        <div style="font-size: 13px; color: #6b7280; margin-top: 4px; font-weight: 500;">Loading portal...</div>
+      </div>
+      <style>
+        @keyframes fm-spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

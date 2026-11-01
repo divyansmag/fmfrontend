@@ -12,4 +12,18 @@ export default defineConfig({
       'react-router-dom': path.resolve(__dirname, 'src/portals/nav.jsx'),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'), // landing page
+        app: path.resolve(__dirname, 'app.html'),    // React app
+      },
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-ui': ['lucide-react', '@phosphor-icons/react'],
+        },
+      },
+    },
+  },
 });

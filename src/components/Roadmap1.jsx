@@ -14,42 +14,42 @@ export default function Roadmap1() {
       realmName: 'Enchanted Forest',
       stars: 3,
       description: 'Explore the core fundamentals of AI and discover its amazing applications in daily life.',
-      imgUrl: 'dist/assets/forest.jpg',
+      imgUrl: '/dist/assets/forest.jpg',
       subtopics: ['What is AI?', 'Machine Learning', 'Neural Nets', 'Everyday AI'],
     },
     mountains: {
       realmName: 'Crystal Mountains',
       stars: 0,
       description: 'Master the fundamentals of neural pathways and algorithms while navigating the frosty cliffs of cognitive bias.',
-      imgUrl: 'dist/assets/mountain.jpg',
+      imgUrl: '/dist/assets/mountain.jpg',
       subtopics: ['Deep Learning', 'Data Bias', 'Algorithm Design', 'Optimization'],
     },
     desert: {
       realmName: 'Golden Desert',
       stars: 0,
       description: 'Traverse through historical paradigms. Learn how Expert Systems and the Turing Test shaped the early days of AI.',
-      imgUrl: 'dist/assets/desert.jpg',
+      imgUrl: '/dist/assets/desert.jpg',
       subtopics: ['History of AI', 'Turing Test', 'Expert Systems', 'AI Winter'],
     },
     castle: {
       realmName: 'Royal Castle',
       stars: 0,
       description: 'Delve deep into cognitive storage networks. Master the mechanics behind Large Language Models and Attention Mechanisms.',
-      imgUrl: 'dist/assets/castle.jpg',
+      imgUrl: '/dist/assets/castle.jpg',
       subtopics: ['Transformers', 'LLMs', 'Attention Mechanism', 'Vector DBs'],
     },
     sky: {
       realmName: 'Floating Sky Islands',
       stars: 0,
       description: 'Elevate your skills by understanding Generative AI, Computer Vision, and the incredible world of Robotics.',
-      imgUrl: 'dist/assets/islands.jpg',
+      imgUrl: '/dist/assets/islands.jpg',
       subtopics: ['Generative AI', 'Computer Vision', 'NLP', 'Robotics'],
     },
     treasure: {
       realmName: 'Treasure Chest',
       stars: 0,
       description: 'You have reached the final destination! Complete your final project to achieve mastery and earn your certification.',
-      imgUrl: 'dist/assets/chest_transparent.png',
+      imgUrl: '/dist/assets/chest_transparent.png',
       subtopics: ['Final Project', 'Certification', 'Next Steps', 'Mastery'],
     },
   };
@@ -128,11 +128,11 @@ export default function Roadmap1() {
 
   const getHeroBgClass = () => {
     const key = currentRealm.styleKey;
-    if (key === 'forest') return "bg-[url('dist/assets/forest.jpg')]";
-    if (key === 'mountains') return "bg-[url('dist/assets/mountain.jpg')]";
-    if (key === 'desert') return "bg-[url('dist/assets/desert.jpg')]";
-    if (key === 'castle') return "bg-[url('dist/assets/castle.jpg')]";
-    if (key === 'sky') return "bg-[url('dist/assets/islands.jpg')]";
+    if (key === 'forest') return "bg-[url('/dist/assets/forest.jpg')]";
+    if (key === 'mountains') return "bg-[url('/dist/assets/mountain.jpg')]";
+    if (key === 'desert') return "bg-[url('/dist/assets/desert.jpg')]";
+    if (key === 'castle') return "bg-[url('/dist/assets/castle.jpg')]";
+    if (key === 'sky') return "bg-[url('/dist/assets/islands.jpg')]";
     return "bg-[url('https://images.unsplash.com/photo-1618365908648-e71bd5716cba?w=1600&auto=format&fit=crop&q=80')]";
   };
 
@@ -364,7 +364,7 @@ export default function Roadmap1() {
                   >
                     {styleKey === 'treasure' ? (
                       <div className="w-16 h-16 md:w-20 md:h-20 relative flex-shrink-0 transition-transform hover:scale-110 group-hover/node:scale-110 drop-shadow-xl z-20">
-                        <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url('dist/assets/chest_transparent.png')` }} />
+                        <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url('/dist/assets/chest_transparent.png')` }} />
                       </div>
                     ) : (
                       <div className={`rounded-full border-3 ${isLocked ? 'bg-slate-50' : 'bg-white'} p-1 relative overflow-hidden flex-shrink-0 transition-transform ${isActive
