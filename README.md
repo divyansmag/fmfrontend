@@ -14,7 +14,8 @@ Dockerfile  builds both into one image (this is what Railway runs)
 | Course content: chapters → units → subtopics → assets | Assignments, announcements |
 | **CMS**: admin-only, saves to the database | Teacher / parent / admin dashboards and charts |
 | Video upload to a storage bucket | Student progress numbers |
-| **AI tutor** (Gemini) with the current lesson as context, chats saved | |
+| **AI tutor** (Gemini) with the current lesson as context | |
+| **Chat history**, saved per student and synced across browsers | |
 
 ## Run locally
 
@@ -24,7 +25,7 @@ Needs Node 20+ and Docker (for Postgres only).
 docker compose up -d                       # Postgres on :5432
 
 cd backend
-cp .env.example .env                       # then edit: JWT_SECRET, GEMINI_API_KEY
+cp .env.example .env                       # then edit: JWT_SECRET, GEMINI_API_KEY, GEMINI_MODEL
 npm install
 npm run dev                                # API on :3001 (creates tables + demo data on first start)
 
@@ -35,6 +36,7 @@ npm run dev                                # http://localhost:5173
 ```
 
 Open http://localhost:5173/app.html?view=role-select (or `/` for the landing page).
+Always use port **5173** in development, not 3001.
 
 **Demo accounts** (password = `SEED_PASSWORD`, `password123` if you did not change it):
 
@@ -61,7 +63,40 @@ Max size: `MAX_UPLOAD_MB` (default 300).
 
 **AI tutor.** The browser sends the question to `POST /api/tutor/chat`; the server adds a system prompt
 (friendly tutor for grades 6–8) plus the lesson the student is viewing, calls Gemini, and stores the exchange.
-The Gemini key lives only on the server. Quiz answers are never put in the prompt. Limit: 15 questions/min/user.
+The Gemini key lives only on the server. Quiz answers are never put in the prompt.
+- Limit: 15 questions/min/user.
+- Gemini request timeout: 25 seconds.
+- Thinking is set to `low` to keep replies fast.
+
+**Chat history sync.** Conversations are stored in Postgres and loaded when the AI Tutor opens, so they survive
+clearing the browser or switching devices. Each student can only see their own chats.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/tutor/sessions` | List the user's sessions (newest first, max 50) |
+| GET | `/api/tutor/sessions/:id/messages` | Messages of one session (404 if not the user's) |
+| DELETE | `/api/tutor/sessions/:id` | Delete one of the user's sessions |
+
+## Choosing a Gemini model
+
+Model names change and old ones are retired for new accounts (`gemini-2.5-flash` now returns 404 for new keys).
+List what your key can use:
+
+```bash
+curl -H "x-goog-api-key: YOUR_KEY" "https://generativelanguage.googleapis.com/v1beta/models"
+```
+
+Pick a model whose `supportedGenerationMethods` includes `generateContent`. We tested these for speed with a
+short tutor question:
+
+| Model | Result |
+|---|---|
+| `gemini-3.1-flash-lite` | about 2 seconds, **recommended** |
+| `gemini-3.5-flash-lite` | about 3 to 4 seconds |
+| `gemini-3.5-flash` | about 6 seconds, one "high demand" 503 |
+| `gemini-3.8-flash` | 30 to 60 seconds, too slow for a tutor |
+
+Set it with `GEMINI_MODEL=gemini-3.1-flash-lite` (no `models/` prefix).
 
 ## Deploy on Railway
 
@@ -82,7 +117,7 @@ The Gemini key lives only on the server. Quiz answers are never put in the promp
    | `JWT_SECRET` | a long random string (`openssl rand -hex 32`) |
    | `SEED_PASSWORD` | the password for the 4 demo accounts. **Set this before the first deploy** |
    | `GEMINI_API_KEY` | from https://aistudio.google.com/apikey |
-   | `GEMINI_MODEL` | e.g. `gemini-2.5-flash` (use any current Flash model id) |
+   | `GEMINI_MODEL` | `gemini-3.1-flash-lite` (or any current fast Flash model) |
 
    If video uploads fail with a signature / host error, check the bucket's **Credentials** tab: older buckets
    use path-style URLs, in which case also set `S3_FORCE_PATH_STYLE=true`.
@@ -105,13 +140,19 @@ TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/fm_test npm test  
 
 Covers: role-based access (only admin can write the CMS), login rules, lossless course storage, upload limits and
 Range requests, tutor prompt/history/rate-limit handling (Gemini is stubbed), suspended-user lockout.
+The chat history sync routes were tested by hand, not by automated tests.
 
 ## Known limitations (demo scope)
 
+- **Grade filtering happens in the browser.** `GET /api/course` sends every grade's content, including locked
+  chapters, to every logged-in student. Filter by grade on the server before using this with real students.
 - The CMS saves the whole course in one request (last write wins). Two admins editing at once can overwrite each other.
 - `/api/media/<id>` links are public to anyone who has the link (names are unguessable UUIDs). Needed because `<video>` can't send auth headers.
+- Without a bucket, uploads go to local disk (`backend/uploads/`), which most hosts wipe on redeploy. Configure the bucket in production.
 - Deleting a video asset does not delete its file from the bucket.
 - No self-signup or "forgot password"; accounts are created by seed / SQL.
+- All four demo accounts share one password. Change `SEED_PASSWORD` before going live.
+- If Gemini is overloaded (503) or rate-limited (429), the student sees a friendly error. There is no automatic retry or fallback model yet.
 - Free Gemini tier: rate-limited, and Google may use free-tier data to improve its products. Only the student's grade,
   the question and the lesson text are sent (no names). Do not use real student data on the free tier.
 - The Helmet CSP header is disabled because the landing page uses inline scripts and lessons embed YouTube/Vimeo.
