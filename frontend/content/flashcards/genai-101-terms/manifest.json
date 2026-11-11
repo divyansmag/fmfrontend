@@ -1,0 +1,15 @@
+{
+  "id": "genai-101-terms",
+  "type": "flashcards",
+  "title": "GenAI Essentials — Key Terms",
+  "description": "Core vocabulary flashcards for the GenAI Essentials module.",
+  "tags": ["genai-essentials", "module-1"],
+  "dateAdded": "2026-09-14",
+  "data": {
+    "cards": [
+      { "front": "What is a token?", "back": "The basic unit of text (a word or word-piece) that a language model reads and generates." },
+      { "front": "What is a prompt?", "back": "The input text given to a model to elicit a response." },
+      { "front": "What is fine-tuning?", "back": "Further training a pretrained model on a smaller, task-specific dataset to specialize its behavior." }
+    ]
+  }
+}

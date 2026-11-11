@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Builder Challenge</title>
+  <style>
+    :root { --purple: #7C3AED; --amber: #F59E0B; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: linear-gradient(180deg, #F5F3FF, #fff);
+      color: #111827;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 6px; color: var(--purple); font-size: 1.4rem; }
+    p { margin: 0 0 16px; color: #6B7280; font-size: 0.9rem; }
+    .parts, .dropzone {
+      display: flex; flex-wrap: wrap; gap: 8px; min-height: 56px;
+      padding: 12px; border-radius: 16px;
+    }
+    .parts { background: #fff; border: 1px dashed #DDD6FE; margin-bottom: 12px; }
+    .dropzone { background: #F5F3FF; border: 2px dashed var(--purple); min-height: 88px; }
+    .chip {
+      cursor: grab; background: white; border: 1px solid #EDE9FE;
+      border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 700;
+      box-shadow: 0 4px 10px rgba(124,58,237,.08);
+    }
+    .dropzone .chip { background: var(--purple); color: white; border-color: transparent; }
+    button {
+      margin-top: 16px; border: 0; background: var(--purple); color: white;
+      font-weight: 800; padding: 10px 18px; border-radius: 14px; cursor: pointer;
+    }
+    #result { margin-top: 12px; font-size: 0.9rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Prompt Builder Challenge</h1>
+  <p>Drag the parts into the prompt tray in a useful order: persona, task, constraints.</p>
+  <div class="parts" id="parts"></div>
+  <div class="dropzone" id="tray" ondragover="event.preventDefault()" ondrop="drop(event)"></div>
+  <button type="button" onclick="check()">Check my prompt</button>
+  <div id="result"></div>
+  <script>
+    const parts = [
+      { id: 'persona', text: 'You are a patient Grade 6 science tutor' },
+      { id: 'task', text: 'Explain tokens like trading cards' },
+      { id: 'constraint', text: 'Use 3 short sentences and one example' },
+      { id: 'noise', text: 'Write a pirate poem about lunch' },
+    ];
+    const ideal = ['persona', 'task', 'constraint'];
+    const partsEl = document.getElementById('parts');
+    const tray = document.getElementById('tray');
+
+    function chip(part) {
+      const el = document.createElement('div');
+      el.className = 'chip';
+      el.draggable = true;
+      el.dataset.id = part.id;
+      el.textContent = part.text;
+      el.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', part.id));
+      el.addEventListener('click', () => move(el));
+      return el;
+    }
+
+    parts.sort(() => Math.random() - 0.5).forEach((part) => partsEl.appendChild(chip(part)));
+
+    function move(el) {
+      (el.parentElement === tray ? partsEl : tray).appendChild(el);
+    }
+
+    function drop(e) {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      const el = document.querySelector(`[data-id="${id}"]`);
+      if (el) tray.appendChild(el);
+    }
+
+    function check() {
+      const order = [...tray.querySelectorAll('.chip')].map((el) => el.dataset.id);
+      const result = document.getElementById('result');
+      const good = ideal.every((id) => order.includes(id)) && !order.includes('noise');
+      result.style.color = good ? '#059669' : '#DC2626';
+      result.textContent = good
+        ? 'Nice! Persona + task + constraints is a strong prompt pattern.'
+        : 'Almost — keep persona, task, and constraints, and leave the pirate poem out.';
+    }
+  </script>
+</body>
+</html>

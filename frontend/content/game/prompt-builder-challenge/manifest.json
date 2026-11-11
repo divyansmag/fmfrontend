@@ -1,0 +1,12 @@
+{
+  "id": "prompt-builder-challenge",
+  "type": "game",
+  "title": "Prompt Builder Challenge",
+  "description": "Drag-and-drop mini-game where students assemble a well-formed prompt from parts.",
+  "tags": ["genai-essentials", "interactive"],
+  "dateAdded": "2026-09-14",
+  "data": {
+    "file": "index.html",
+    "thumbnail": "assets/thumb.svg"
+  }
+}
