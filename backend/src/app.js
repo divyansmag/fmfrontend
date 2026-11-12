@@ -6,6 +6,7 @@ import { config } from './config.js';
 import { pool } from './db.js';
 import { HttpError } from './errors.js';
 import authRoutes from './routes/auth.js';
+import cmsRoutes from './routes/cms.js';
 import courseRoutes from './routes/course.js';
 import tutorRoutes from './routes/tutor.js';
 import uploadRoutes, { serveMedia } from './routes/uploads.js';
@@ -24,6 +25,7 @@ export function createApp() {
     res.json({ ok: true });
   });
   app.use('/api/auth', authRoutes);
+  app.use('/api/cms', cmsRoutes);
   app.use('/api/course', courseRoutes);
   app.use('/api/uploads', uploadRoutes);
   app.get('/api/media/:name', serveMedia);
@@ -51,7 +53,12 @@ export function createApp() {
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, _req, res, _next) => {
-    if (err instanceof HttpError) return res.status(err.status).json({ error: err.message });
+    if (err instanceof HttpError) {
+      return res.status(err.status).json({
+        error: err.message,
+        ...(err.code ? { code: err.code } : {}),
+      });
+    }
     if (err?.type === 'entity.too.large') return res.status(413).json({ error: 'Request too large' });
     if (err?.type === 'entity.parse.failed') return res.status(400).json({ error: 'Invalid JSON' });
     console.error('[error]', err);

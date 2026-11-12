@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import express from 'express';
-import { requireAuth, requireRole } from '../auth.js';
+import { requireAuth, requireCmsUnlock, requireRole } from '../auth.js';
 import { loadTree, replaceTree } from '../courseStore.js';
 import { readSeedCourse } from '../db.js';
 
@@ -23,13 +23,13 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // Only admins can change it. This is what "CMS is admin-only" means: the server refuses everyone else.
-router.put('/', ...requireRole('admin'), express.json({ limit: '25mb' }), async (req, res) => {
+router.put('/', ...requireRole('admin'), requireCmsUnlock, express.json({ limit: '25mb' }), async (req, res) => {
   const saved = await replaceTree(req.body);
   res.json({ ok: true, saved });
 });
 
 // Replaces the old client-side "password 1234" reset button.
-router.post('/reset', ...requireRole('admin'), async (_req, res) => {
+router.post('/reset', ...requireRole('admin'), requireCmsUnlock, async (_req, res) => {
   const saved = await replaceTree(readSeedCourse());
   res.json({ ok: true, saved, course: await loadTree() });
 });

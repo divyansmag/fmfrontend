@@ -18,6 +18,7 @@ const Progress = lazy(() => import('./components/Progress.jsx'));
 const Settings = lazy(() => import('./components/Settings.jsx'));
 const ChapterModal = lazy(() => import('./components/ChapterModal.jsx'));
 const CMS = lazy(() => import('./components/CMS.jsx'));
+const CmsGate = lazy(() => import('./components/CmsGate.jsx'));
 const PortalApp = lazy(() => import('./portals/PortalApp.jsx'));
 
 const AUTH_VIEWS = ['student-login', 'teacher-login', 'parent-login', 'admin-login', 'role-select'];
@@ -112,7 +113,7 @@ export default function App() {
               {currentView === 'ai-tutor' && <AITutor />}
               {currentView === 'progress' && <Progress />}
               {currentView === 'settings' && <Settings />}
-              {currentView === 'cms' && <CMS />}
+              {currentView === 'cms' && <CmsGate><CMS /></CmsGate>}
             </div>
           </div>
           <ChapterModal />

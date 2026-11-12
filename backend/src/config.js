@@ -20,6 +20,7 @@ export const config = {
   port: Number(env.PORT || 3001),
   databaseUrl: env.DATABASE_URL,
   databaseSsl: env.DATABASE_SSL === 'true',
+  cmsPassword: env.CMS_PASSWORD || '',
   jwtSecret: env.JWT_SECRET || 'dev-only-secret-do-not-use-in-production',
   corsOrigins: (env.CORS_ORIGIN || '').split(',').map((s) => s.trim()).filter(Boolean),
   seedPassword: env.SEED_PASSWORD || 'password123',

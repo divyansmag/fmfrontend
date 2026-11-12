@@ -43,3 +43,18 @@ export const requireRole = (...roles) => [
   (req, _res, next) =>
     roles.includes(req.user.role) ? next() : next(httpError(403, 'You do not have permission to do that')),
 ];
+
+export function requireCmsUnlock(req, _res, next) {
+  const token = req.headers['x-cms-token'] || (typeof req.header === 'function' ? req.header('x-cms-token') : null);
+  if (!token) return next(httpError(403, 'CMS is locked. Enter the CMS password.', 'cms_locked'));
+  let payload;
+  try {
+    payload = jwt.verify(token, config.jwtSecret);
+  } catch {
+    return next(httpError(403, 'CMS is locked. Enter the CMS password.', 'cms_locked'));
+  }
+  if (!payload || payload.cms !== true || payload.sub !== req.user?.id) {
+    return next(httpError(403, 'CMS is locked. Enter the CMS password.', 'cms_locked'));
+  }
+  next();
+}

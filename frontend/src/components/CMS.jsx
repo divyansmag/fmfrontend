@@ -5,7 +5,7 @@ import {
   Trash2, Video, Zap, X, ArrowUp, ArrowDown, Check, Upload, FileCode
 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
-import { api } from '../lib/api.js';
+import { api, setCmsToken } from '../lib/api.js';
 import {
   getSortedChapters, getSortedUnits, getSortedSubtopics, getSortedAssets,
   DEFAULT_AI_MINDMAP_TREE
@@ -54,6 +54,10 @@ function VideoForm({ data, onChange }) {
       const result = await api.uploadFile(file, setProgress);
       onChange({ ...data, url: result.url, fileName: file.name });
     } catch (err) {
+      if (err?.code === 'cms_locked') {
+        setCmsToken(null);
+        window.dispatchEvent(new CustomEvent('cms-relock'));
+      }
       setError(err.message);
     } finally {
       setProgress(null);
@@ -579,6 +583,10 @@ export default function CMS() {
       setSelectedChapterId(null); setSelectedUnitId(null); setSelectedSubtopicId(null); setSelectedAssetId(null);
       showToast('Reset', 'Course data restored to defaults.', 'info');
     } catch (err) {
+      if (err?.code === 'cms_locked') {
+        setCmsToken(null);
+        window.dispatchEvent(new CustomEvent('cms-relock'));
+      }
       showToast('Reset failed', err.message, 'error');
     }
   };

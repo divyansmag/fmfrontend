@@ -115,6 +115,7 @@ Set it with `GEMINI_MODEL=gemini-3.1-flash-lite` (no `models/` prefix).
    | `S3_ACCESS_KEY_ID` | `${{Bucket.ACCESS_KEY_ID}}` |
    | `S3_SECRET_ACCESS_KEY` | `${{Bucket.SECRET_ACCESS_KEY}}` |
    | `JWT_SECRET` | a long random string (`openssl rand -hex 32`) |
+   | `CMS_PASSWORD` | separate password required to unlock Content CMS writes (e.g. `openssl rand -hex 16`) |
    | `SEED_PASSWORD` | the password for the 4 demo accounts. **Set this before the first deploy** |
    | `GEMINI_API_KEY` | from https://aistudio.google.com/apikey |
    | `GEMINI_MODEL` | `gemini-3.1-flash-lite` (or any current fast Flash model) |

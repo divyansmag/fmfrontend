@@ -4,7 +4,7 @@ import {
   INITIAL_USER,
   INITIAL_VIDEO,
 } from '../data/initialState';
-import { api, getToken, setToken } from '../lib/api.js';
+import { api, getCmsToken, getToken, setCmsToken, setToken } from '../lib/api.js';
 import {
   loadCourseData,
   saveCourseData,
@@ -262,6 +262,12 @@ export function AppProvider({ children }) {
       try {
         await api.saveCourse(pendingTree.current);
       } catch (err) {
+        if (err?.code === 'cms_locked') {
+          setCmsToken(null);
+          window.dispatchEvent(new CustomEvent('cms-relock'));
+          toastRef.current('CMS locked, please re-enter the password', '', 'error');
+          return;
+        }
         toastRef.current('Save failed', `${err.message} Your latest change is NOT stored on the server yet.`, 'error');
       }
     }, 700);
@@ -950,6 +956,7 @@ export function AppProvider({ children }) {
       courseData,
       chapters,
       updateCourseData,
+      scheduleServerSave,
       applyServerCourse,
       refreshCourse,
       // ── Current Position ──────────────────────────────
@@ -1013,7 +1020,7 @@ export function AppProvider({ children }) {
       user, currentView, currentTheme, video, aiTutor, toasts,
       sidebarCollapsed, mobileSidebarOpen, profileOpen, notifOpen, chapterModalOpen,
       aiSearchQuery, aiInput, discussionInput, navKey, currentSession, filteredSessions,
-      courseData, chapters, updateCourseData, applyServerCourse, refreshCourse,
+      courseData, chapters, updateCourseData, scheduleServerSave, applyServerCourse, refreshCourse,
       currentChapterId, currentUnitId, currentSubtopicId, currentAssetId,
       currentChapter, currentUnit, currentSubtopic, currentAsset,
       selectedChapterId, selectedChapter,

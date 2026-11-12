@@ -2,7 +2,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { Router } from 'express';
 import Busboy from 'busboy';
-import { requireRole } from '../auth.js';
+import { requireCmsUnlock, requireRole } from '../auth.js';
 import { config } from '../config.js';
 import { httpError } from '../errors.js';
 import { sizeLimiter, storage } from '../storage.js';
@@ -22,7 +22,7 @@ export const MEDIA_NAME = /^[A-Za-z0-9-]+\.(mp4|webm|png|jpg|webp|gif|pdf)$/;
 
 // Admin-only. The file is streamed straight through to storage (never buffered in memory or put in Postgres).
 // Returns a stable URL to store in asset.data.url, e.g. { url: '/api/media/<uuid>.mp4' }.
-router.post('/', ...requireRole('admin'), (req, res, next) => {
+router.post('/', ...requireRole('admin'), requireCmsUnlock, (req, res, next) => {
   if (!String(req.headers['content-type'] || '').startsWith('multipart/form-data')) {
     return next(httpError(400, 'Send multipart/form-data with a "file" field'));
   }
