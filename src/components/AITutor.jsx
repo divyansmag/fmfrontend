@@ -19,8 +19,15 @@ export default function AITutor() {
     deleteChatMessage,
     sendAiMessage,
     showToast,
+    syncTutorSessions,
   } = useApp();
   const streamRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof syncTutorSessions === 'function') {
+      syncTutorSessions();
+    }
+  }, [syncTutorSessions]);
 
   useEffect(() => {
     if (streamRef.current) {

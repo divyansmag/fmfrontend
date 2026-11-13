@@ -5,9 +5,10 @@ import {
   Trash2, Video, Zap, X, ArrowUp, ArrowDown, Check, Upload, FileCode
 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
+import { api, setCmsToken } from '../lib/api.js';
 import {
   getSortedChapters, getSortedUnits, getSortedSubtopics, getSortedAssets,
-  resetCourseData, DEFAULT_AI_MINDMAP_TREE
+  DEFAULT_AI_MINDMAP_TREE
 } from '../data/courseData';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -39,10 +40,50 @@ function labelCls() {
 // ── Asset data forms ──────────────────────────────────────────────────────
 
 function VideoForm({ data, onChange }) {
+  const fileRef = useRef(null);
+  const [progress, setProgress] = useState(null); // null = idle, 0-100 = uploading
+  const [error, setError] = useState('');
+
+  // Uploads go to the server, which streams them into the storage bucket and gives back a stable URL.
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setProgress(0);
+    try {
+      const result = await api.uploadFile(file, setProgress);
+      onChange({ ...data, url: result.url, fileName: file.name });
+    } catch (err) {
+      if (err?.code === 'cms_locked') {
+        setCmsToken(null);
+        window.dispatchEvent(new CustomEvent('cms-relock'));
+      }
+      setError(err.message);
+    } finally {
+      setProgress(null);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div>
-        <label className={labelCls()}>Video URL (YouTube, Vimeo, or direct MP4)</label>
+        <label className={labelCls()}>Upload a video file (MP4 or WebM)</label>
+        <input ref={fileRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleUpload} />
+        <button
+          type="button"
+          disabled={progress !== null}
+          onClick={() => fileRef.current?.click()}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-purple-200 dark:border-purple-800 text-xs font-bold text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all disabled:opacity-60"
+        >
+          <Upload className="w-3.5 h-3.5" />
+          {progress === null ? 'Choose video file' : `Uploading… ${progress}%`}
+        </button>
+        {data.fileName && progress === null && <span className="ml-2 text-xs text-slate-500">{data.fileName}</span>}
+        {error && <p className="mt-1.5 text-xs font-semibold text-red-500">{error}</p>}
+      </div>
+      <div>
+        <label className={labelCls()}>…or paste a video URL (YouTube, Vimeo, or direct MP4)</label>
         <input type="url" className={inputCls()} value={data.url || ''} placeholder="https://youtube.com/watch?v=..." onChange={(e) => onChange({ ...data, url: e.target.value })} />
       </div>
       <div>
@@ -508,7 +549,7 @@ function moveItem(arr, index, direction) {
 // ── Main CMS Component ────────────────────────────────────────────────────
 
 export default function CMS() {
-  const { courseData, updateCourseData, showToast, navigateTo } = useApp();
+  const { courseData, updateCourseData, applyServerCourse, showToast, navigateTo } = useApp();
 
   // Selected IDs for the detail panel
   const [selectedChapterId, setSelectedChapterId] = useState(null);
@@ -533,17 +574,21 @@ export default function CMS() {
     showToast('Saved', 'Course structure updated and saved!', 'success');
   }, [updateCourseData, showToast]);
 
-  const handleReset = () => {
-    const password = window.prompt('Please enter the password to reset course data:');
-    if (password !== '1234') {
-      alert('Incorrect password. Reset cancelled.');
-      return;
-    }
+  // Reset is now a server-side, admin-only action (the old client-side "password 1234" check was bypassable).
+  const handleReset = async () => {
     if (!window.confirm('Reset course data to built-in defaults? All CMS changes will be lost.')) return;
-    const reset = resetCourseData();
-    updateCourseData(reset);
-    setSelectedChapterId(null); setSelectedUnitId(null); setSelectedSubtopicId(null); setSelectedAssetId(null);
-    showToast('Reset', 'Course data restored to defaults.', 'info');
+    try {
+      const { course } = await api.resetCourse();
+      applyServerCourse(course);
+      setSelectedChapterId(null); setSelectedUnitId(null); setSelectedSubtopicId(null); setSelectedAssetId(null);
+      showToast('Reset', 'Course data restored to defaults.', 'info');
+    } catch (err) {
+      if (err?.code === 'cms_locked') {
+        setCmsToken(null);
+        window.dispatchEvent(new CustomEvent('cms-relock'));
+      }
+      showToast('Reset failed', err.message, 'error');
+    }
   };
 
   // ── Derived selections ────────────────────────────────────────────────────
@@ -841,10 +886,10 @@ export default function CMS() {
           </button>
           <button
             type="button"
-            onClick={() => navigateTo('roadmap-2')}
+            onClick={() => navigateTo('admin-dashboard')}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-all shadow-md shadow-purple-600/20"
           >
-            View Roadmap →
+            ← Admin Dashboard
           </button>
         </div>
       </div>

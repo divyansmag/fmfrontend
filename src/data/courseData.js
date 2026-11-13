@@ -2039,7 +2039,7 @@ export function getSortedUnits(chapter) {
 /** Get sorted chapters for a course */
 export function getSortedChapters(data) {
   if (!data?.chapters) return [];
-  return [...data.chapters].sort((a, b) => a.order - b.order);
+  return data.chapters.filter(Boolean).sort((a, b) => a.order - b.order);
 }
 
 /** Get all asset IDs in the course (for progress tracking) */

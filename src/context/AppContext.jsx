@@ -3,8 +3,8 @@ import {
   INITIAL_AI_TUTOR,
   INITIAL_USER,
   INITIAL_VIDEO,
-  generateOwlReply,
 } from '../data/initialState';
+import { api, getCmsToken, getToken, setCmsToken, setToken } from '../lib/api.js';
 import {
   loadCourseData,
   saveCourseData,
@@ -38,6 +38,21 @@ const ROLE_HOME = {
   admin: 'admin-dashboard',
 };
 
+const AUTH_VIEWS = ['student-login', 'teacher-login', 'parent-login', 'admin-login', 'role-select'];
+const STUDENT_VIEWS = new Set(['dashboard', 'roadmap-1', 'roadmap-2', 'video', 'ai-tutor', 'progress', 'settings']);
+
+// UI-level routing guard. The REAL protection is the API (every write is checked server-side);
+// this just stops people landing on screens that aren't theirs.
+function viewAllowed(view, role) {
+  if (AUTH_VIEWS.includes(view)) return true;
+  if (view === 'cms') return role === 'admin';
+  if (view.startsWith('admin-')) return role === 'admin';
+  if (view.startsWith('teacher-')) return role === 'teacher';
+  if (view.startsWith('parent-')) return role === 'parent';
+  if (STUDENT_VIEWS.has(view)) return role === 'student';
+  return false;
+}
+
 export function AppProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
@@ -68,7 +83,13 @@ export function AppProvider({ children }) {
     }
   });
   const [video, setVideo] = useState(INITIAL_VIDEO);
-  const [aiTutor, setAiTutor] = useState(INITIAL_AI_TUTOR);
+  const [aiTutor, setAiTutor] = useState(() => {
+    try {
+      const saved = localStorage.getItem('futureminds_ai_sessions_v1');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return INITIAL_AI_TUTOR;
+  });
   const [toasts, setToasts] = useState([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -80,6 +101,8 @@ export function AppProvider({ children }) {
   const [discussionInput, setDiscussionInput] = useState('');
   const toastSeq = useRef(0);
   const typingRef = useRef(false);
+  const aiTutorRef = useRef(null);
+  const syncTutorSessionsRef = useRef(null);
 
   // ─── Save User & View Session ────────────────────────────────────────────
   useEffect(() => {
@@ -99,6 +122,12 @@ export function AppProvider({ children }) {
       localStorage.setItem('futureminds_theme_mode', currentTheme);
     } catch { /* ignore quota */ }
   }, [currentTheme]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('futureminds_ai_sessions_v1', JSON.stringify(aiTutor));
+    } catch { /* ignore quota */ }
+  }, [aiTutor]);
 
   // ─── Course State ────────────────────────────────────────────────────────
   const [courseData, setCourseDataState] = useState(() => loadCourseData());
@@ -219,13 +248,95 @@ export function AppProvider({ children }) {
   );
 
   // ─── CMS: update course data ─────────────────────────────────────────────
+  const userRef = useRef(user);
+  userRef.current = user;
+  const toastRef = useRef(() => {});
+  const saveTimer = useRef(null);
+  const pendingTree = useRef(null);
+
+  const scheduleServerSave = useCallback((tree) => {
+    if (!getToken() || String(userRef.current.role).toLowerCase() !== 'admin') return;
+    pendingTree.current = tree;
+    window.clearTimeout(saveTimer.current);
+    saveTimer.current = window.setTimeout(async () => {
+      try {
+        await api.saveCourse(pendingTree.current);
+      } catch (err) {
+        if (err?.code === 'cms_locked') {
+          setCmsToken(null);
+          window.dispatchEvent(new CustomEvent('cms-relock'));
+          toastRef.current('CMS locked, please re-enter the password', '', 'error');
+          return;
+        }
+        toastRef.current('Save failed', `${err.message} Your latest change is NOT stored on the server yet.`, 'error');
+      }
+    }, 700);
+  }, []);
+
   const updateCourseData = useCallback((newDataOrUpdater) => {
     setCourseDataState((prev) => {
       const next = typeof newDataOrUpdater === 'function' ? newDataOrUpdater(prev) : newDataOrUpdater;
       saveCourseData(next);
+      scheduleServerSave(next);
       return next;
     });
+  }, [scheduleServerSave]);
+
+  // Replace local course state with what the server has (no echo save back).
+  const applyServerCourse = useCallback((tree) => {
+    if (!tree || !Array.isArray(tree.chapters) || tree.chapters.length === 0) return;
+    setCourseDataState(tree);
+    saveCourseData(tree);
+    const ch = tree.chapters.find(Boolean);
+    const un = ch?.units?.[0];
+    const st = un?.subtopics?.[0];
+    const as = st?.assets?.[0];
+    const hasChapter = (id) => tree.chapters.some((c) => c && c.id === id);
+    // If the remembered lesson no longer exists, fall back to the first one.
+    setCurrentChapterId((id) => (hasChapter(id) ? id : ch?.id ?? null));
+    setSelectedChapterId((id) => (hasChapter(id) ? id : ch?.id ?? null));
+    setCurrentUnitId((id) => (tree.chapters.some((c) => c?.units?.some((u) => u.id === id)) ? id : un?.id ?? null));
+    setCurrentSubtopicId((id) => (tree.chapters.some((c) => c?.units?.some((u) => u.subtopics?.some((s) => s.id === id))) ? id : st?.id ?? null));
+    setCurrentAssetId((id) => (tree.chapters.some((c) => c?.units?.some((u) => u.subtopics?.some((s) => s.assets?.some((a) => a.id === id)))) ? id : as?.id ?? null));
   }, []);
+
+  const refreshCourse = useCallback(async () => {
+    if (!getToken()) return;
+    try {
+      applyServerCourse(await api.getCourse());
+    } catch (err) {
+      if (err.status !== 401) console.warn('[course] using cached copy:', err.message);
+    }
+  }, [applyServerCourse]);
+
+  // ─── Session: verify the stored token with the server, then pull the live course ───
+  useEffect(() => {
+    if (!getToken()) return;
+    let cancelled = false;
+    api.me()
+      .then(({ user: account }) => {
+        if (cancelled) return;
+        // Trust the server's role, not whatever is sitting in localStorage.
+        loginAsRole(account.role, { name: account.name, email: account.email });
+        refreshCourse();
+        syncTutorSessionsRef.current?.();
+      })
+      .catch((err) => {
+        if (cancelled || err.status !== 401) return;
+        setToken(null);
+        setCurrentView('role-select');
+      });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // No token -> login screens only. Wrong role for a screen (e.g. CMS) -> bounce to own home.
+  useEffect(() => {
+    if (AUTH_VIEWS.includes(currentView)) return;
+    if (!getToken()) { setCurrentView('role-select'); return; }
+    const role = String(user.role || 'student').toLowerCase();
+    if (!viewAllowed(currentView, role)) setCurrentView(ROLE_HOME[role] || 'role-select');
+  }, [currentView, user.role]);
 
   // ─── Navigation ─────────────────────────────────────────────────────────
   const showToast = useCallback((title, message, icon = 'info') => {
@@ -235,6 +346,7 @@ export function AppProvider({ children }) {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 3500);
   }, []);
+  toastRef.current = showToast;
 
   const closeDropdowns = useCallback(() => {
     setProfileOpen(false);
@@ -377,15 +489,29 @@ export function AppProvider({ children }) {
     showToast('Profile Updated', 'Your details have been successfully saved.', 'success');
   }, [showToast]);
 
-  const handleLogin = useCallback((event, email, role = 'student') => {
+  // Real sign-in: the server checks the password AND that the account really has this role.
+  const handleLogin = useCallback(async (event, email, role = 'student', password = '') => {
     if (event) event.preventDefault();
-    const profile = ROLE_PROFILES[role] || ROLE_PROFILES.student;
-    loginAsRole(role, { email: email || `${role}@futureminds.demo` });
-    showToast(`Welcome back, ${profile.name.split(' ')[0]}!`, 'Successfully signed into FutureMinds', 'success');
-    navigateTo(ROLE_HOME[role] || 'dashboard');
-  }, [loginAsRole, navigateTo, showToast]);
+    try {
+      const { token, user: account } = await api.login(email, password, role);
+      setToken(token);
+      loginAsRole(role, {
+        name: account.name,
+        email: account.email,
+        ...(account.grade ? { grade: `Grade ${account.grade}` } : {}),
+      });
+      refreshCourse();
+      syncTutorSessionsRef.current?.();
+      showToast(`Welcome back, ${account.name.split(' ')[0]}!`, 'Successfully signed into FutureMinds', 'success');
+      navigateTo(ROLE_HOME[role] || 'dashboard');
+    } catch (err) {
+      showToast('Sign-in failed', err.message, 'error');
+    }
+  }, [loginAsRole, navigateTo, refreshCourse, showToast]);
 
   const handleLogout = useCallback(() => {
+    window.clearTimeout(saveTimer.current);
+    setToken(null);
     closeAllModals();
     showToast('Logged Out', 'You have been safely signed out.', 'info');
     navigateTo('role-select');
@@ -535,9 +661,95 @@ export function AppProvider({ children }) {
     addXP(5, 'Participated in Discussion');
   }, [addXP, discussionInput, showToast, user.name]);
 
+  const loadSessionMessages = useCallback(async (sessionId) => {
+    if (!getToken()) return;
+    try {
+      const messages = await api.tutorMessages(String(sessionId));
+      if (Array.isArray(messages)) {
+        setAiTutor((prev) => ({
+          ...prev,
+          sessions: prev.sessions.map((session) => {
+            if (String(session.id) !== String(sessionId)) return session;
+            const mapped = messages.length > 0
+              ? messages.map((m) => ({
+                  sender: m.role === 'assistant' ? 'owl' : 'user',
+                  name: m.role === 'assistant' ? 'Professor Owl' : userRef.current?.name || 'Student',
+                  text: m.content,
+                }))
+              : session.messages;
+            return { ...session, messages: mapped };
+          }),
+        }));
+      }
+    } catch {
+      // fallback to localStorage, do not crash
+    }
+  }, []);
+
   const selectChatSession = useCallback((sessionId) => {
     setAiTutor((prev) => ({ ...prev, currentSessionId: sessionId }));
-  }, []);
+    loadSessionMessages(sessionId);
+  }, [loadSessionMessages]);
+
+  const syncTutorSessions = useCallback(async () => {
+    if (!getToken()) return;
+    try {
+      const serverSessions = await api.tutorSessions();
+      if (!Array.isArray(serverSessions)) return;
+
+      setAiTutor((prev) => {
+        const localMap = new Map((prev.sessions || []).map((s) => [String(s.id), s]));
+        const merged = [];
+        const seen = new Set();
+
+        // Server wins on conflict: newest first
+        for (const s of serverSessions) {
+          const sId = String(s.id);
+          seen.add(sId);
+          const existing = localMap.get(sId);
+          merged.push({
+            id: isNaN(Number(s.id)) ? s.id : (Number(s.id) || s.id),
+            title: s.title || existing?.title || 'AI Chat',
+            messages: existing?.messages && existing.messages.length > 0 ? existing.messages : [],
+          });
+        }
+
+        // Keep local-only sessions that aren't on server yet
+        for (const [idStr, localSess] of localMap.entries()) {
+          if (!seen.has(idStr)) {
+            merged.push(localSess);
+          }
+        }
+
+        const fallback = merged.length > 0 ? merged : prev.sessions;
+        const currentValid = fallback.some((s) => String(s.id) === String(prev.currentSessionId));
+        const activeId = currentValid ? prev.currentSessionId : (fallback[0]?.id ?? prev.currentSessionId);
+
+        return {
+          ...prev,
+          sessions: fallback,
+          currentSessionId: activeId,
+        };
+      });
+
+      setAiTutor((curr) => {
+        if (curr.currentSessionId) {
+          loadSessionMessages(curr.currentSessionId);
+        }
+        return curr;
+      });
+    } catch {
+      // fallback to localStorage, do not crash
+    }
+  }, [loadSessionMessages]);
+
+  syncTutorSessionsRef.current = syncTutorSessions;
+
+  useEffect(() => {
+    if (currentView === 'ai-tutor') {
+      syncTutorSessions();
+    }
+  }, [currentView, syncTutorSessions]);
 
   const createNewSession = useCallback(() => {
     const newId = Date.now();
@@ -564,10 +776,11 @@ export function AppProvider({ children }) {
 
   const deleteChatSession = useCallback((sessionId, event) => {
     if (event) event.stopPropagation();
+    api.tutorDeleteSession(String(sessionId)).catch(() => {});
     setAiTutor((prev) => {
-      let sessions = prev.sessions.filter((session) => session.id !== sessionId);
+      let sessions = prev.sessions.filter((session) => String(session.id) !== String(sessionId));
       let currentSessionId = prev.currentSessionId;
-      if (currentSessionId === sessionId) {
+      if (String(currentSessionId) === String(sessionId)) {
         if (sessions.length > 0) {
           currentSessionId = sessions[0].id;
         } else {
@@ -643,6 +856,8 @@ export function AppProvider({ children }) {
     showToast('Message Deleted', 'Message removed from conversation.', 'info');
   }, [showToast]);
 
+  aiTutorRef.current = aiTutor;
+
   const sendAiMessage = useCallback((promptText = null) => {
     const text = (promptText ?? aiInput).trim();
     if (!text || typingRef.current) return;
@@ -659,21 +874,38 @@ export function AppProvider({ children }) {
       ),
     }));
 
-    window.setTimeout(() => {
-      const reply = generateOwlReply(text);
-      setAiTutor((prev) => ({
-        ...prev,
-        isTyping: false,
-        sessions: prev.sessions.map((session) =>
-          session.id === prev.currentSessionId
-            ? { ...session, messages: [...session.messages, { sender: 'owl', name: 'Professor Owl', text: reply }] }
-            : session
-        ),
-      }));
-      typingRef.current = false;
-      addXP(10, 'Asked Professor Owl');
-    }, 1200);
-  }, [addXP, aiInput, user.name]);
+    // Real tutor: the server calls Gemini (the API key never reaches the browser). While viewing a lesson,
+    // we pass its id so the tutor can use that lesson's content as context.
+    let answered = false;
+    api
+      .tutorChat({
+        sessionId: aiTutorRef.current.currentSessionId,
+        message: text,
+        assetId: currentView === 'video' ? currentAssetId : undefined,
+      })
+      .then(({ reply }) => {
+        answered = true;
+        return reply;
+      })
+      .catch((err) =>
+        err.status === 401
+          ? 'Your session has expired. Please sign in again to keep chatting.'
+          : err.message || 'Professor Owl is resting right now. Please try again.'
+      )
+      .then((reply) => {
+        setAiTutor((prev) => ({
+          ...prev,
+          isTyping: false,
+          sessions: prev.sessions.map((session) =>
+            session.id === prev.currentSessionId
+              ? { ...session, messages: [...session.messages, { sender: 'owl', name: 'Professor Owl', text: reply }] }
+              : session
+          ),
+        }));
+        typingRef.current = false;
+        if (answered) addXP(10, 'Asked Professor Owl');
+      });
+  }, [addXP, aiInput, user.name, currentView, currentAssetId]);
 
   const navKey = useMemo(() => {
     if (currentView === 'roadmap-1' || currentView === 'roadmap-2' || currentView === 'video') {
@@ -724,6 +956,9 @@ export function AppProvider({ children }) {
       courseData,
       chapters,
       updateCourseData,
+      scheduleServerSave,
+      applyServerCourse,
+      refreshCourse,
       // ── Current Position ──────────────────────────────
       currentChapterId,
       currentUnitId,
@@ -779,12 +1014,13 @@ export function AppProvider({ children }) {
       clearAllChatSessions,
       deleteChatMessage,
       sendAiMessage,
+      syncTutorSessions,
     }),
     [
       user, currentView, currentTheme, video, aiTutor, toasts,
       sidebarCollapsed, mobileSidebarOpen, profileOpen, notifOpen, chapterModalOpen,
       aiSearchQuery, aiInput, discussionInput, navKey, currentSession, filteredSessions,
-      courseData, chapters, updateCourseData,
+      courseData, chapters, updateCourseData, scheduleServerSave, applyServerCourse, refreshCourse,
       currentChapterId, currentUnitId, currentSubtopicId, currentAssetId,
       currentChapter, currentUnit, currentSubtopic, currentAsset,
       selectedChapterId, selectedChapter,
@@ -800,7 +1036,7 @@ export function AppProvider({ children }) {
       toggleVideoPlay, switchVideoTab, saveVideoNote,
       postDiscussionReply, selectChatSession, createNewSession,
       deleteChatSession, clearCurrentChat, clearAllChatSessions,
-      deleteChatMessage, sendAiMessage,
+      deleteChatMessage, sendAiMessage, syncTutorSessions,
     ]
   );
 

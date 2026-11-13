@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Check, Info, Star } from 'lucide-react';
+import { AlertTriangle, Check, Info, Star } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 
 const ICONS = {
   info: <Info className="w-5 h-5 text-purple-600" />,
   success: <Check className="w-5 h-5 text-emerald-500" />,
+  error: <AlertTriangle className="w-5 h-5 text-red-500" />,
   star: (
     <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
   ),

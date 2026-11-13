@@ -19,7 +19,7 @@ export default function AuthLogin() {
     teacher: {
       title: 'Teacher',
       placeholder: 'Email / Teacher ID',
-      image: '/dist/sage_login.gif',
+      image: '/dist/assets/sage_login.gif',
       theme: 'emerald',
       imgClass: 'scale-[1.25]',
     },
@@ -78,14 +78,20 @@ export default function AuthLogin() {
   
   const t = themeColors[config.theme];
   
-  const [email, setEmail] = useState(`divya@futureminds.demo`);
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState(`${roleId}@futureminds.demo`);
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
-    handleLogin(event, email, roleId);
+    setBusy(true);
+    try {
+      await handleLogin(event, email.trim(), roleId, password);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -165,8 +171,8 @@ export default function AuthLogin() {
             </button>
           </div>
 
-          <button type="submit" className={`w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r ${t.gradient} ${t.btnHover} text-white font-bold text-sm shadow-lg ${t.shadow} transition-all flex items-center justify-center gap-2 group`}>
-            <span>Login</span>
+          <button type="submit" disabled={busy} className={`w-full py-3.5 mt-2 disabled:opacity-60 disabled:cursor-wait rounded-2xl bg-gradient-to-r ${t.gradient} ${t.btnHover} text-white font-bold text-sm shadow-lg ${t.shadow} transition-all flex items-center justify-center gap-2 group`}>
+            <span>{busy ? 'Signing in…' : 'Login'}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>

@@ -20,6 +20,7 @@ export const PATH_TO_VIEW = {
   '/admin/users': 'admin-users',
   '/admin/platform-progress': 'admin-progress',
   '/admin/settings': 'admin-settings',
+  '/admin/cms': 'cms',
 };
 
 const VIEW_TO_PATH = Object.fromEntries(

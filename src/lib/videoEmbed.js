@@ -1,3 +1,5 @@
+import { resolveMediaUrl } from './api.js';
+
 /**
  * Turn a YouTube / Vimeo / Google Drive / direct media URL into something
  * a <video> or <iframe> can play.
@@ -5,6 +7,11 @@
 export function resolveVideoEmbed(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
   const url = rawUrl.trim();
+
+  // Videos uploaded through the CMS live in the bucket and are served via /api/media/<id>.mp4
+  if (url.startsWith('/api/media/')) {
+    return { kind: 'video', src: resolveMediaUrl(url) };
+  }
 
   const youtube = url.match(
     /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/

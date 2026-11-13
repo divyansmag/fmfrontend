@@ -244,14 +244,16 @@ export default function Header() {
               </div>
 
               <div className="pt-2 space-y-1">
+                {String(user.role).toLowerCase() === 'admin' && (
                 <button
-                  type="button"
-                  onClick={() => navigateTo('cms')}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-                >
-                  <Layers className="w-4 h-4" />
-                  <span>Content CMS</span>
-                </button>
+                    type="button"
+                    onClick={() => navigateTo('cms')}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                  >
+                    <Layers className="w-4 h-4" />
+                    <span>Content CMS</span>
+                  </button>
+                )}
 
                 <button
                   type="button"

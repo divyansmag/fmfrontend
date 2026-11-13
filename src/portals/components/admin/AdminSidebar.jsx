@@ -4,6 +4,7 @@ import {
   LayoutGrid,
   TrendingUp,
   Users,
+  Layers,
   Settings,
   HelpCircle,
   LogOut,
@@ -49,6 +50,12 @@ export const AdminSidebar = () => {
     label: 'Platform Progress',
     path: '/admin/platform-progress',
     icon: TrendingUp
+  },
+  {
+    id: 'cms',
+    label: 'Content CMS',
+    path: '/admin/cms',
+    icon: Layers
   }];
 
 
