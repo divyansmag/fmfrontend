@@ -350,7 +350,7 @@ Three forces converged to make modern AI possible:
                   title: 'How Machines Learn from Data',
                   type: 'video',
                   data: {
-                    url: 'https://www.youtube.com/watch?v=R9OHn5ZF4Uo',
+                    url: '/videos/grade06/V03.mp4',
                     durationMinutes: 14,
                   },
                 },
@@ -483,7 +483,7 @@ print(df.dtypes)
                   title: 'Machine Learning in 5 Minutes',
                   type: 'video',
                   data: {
-                    url: 'https://www.youtube.com/watch?v=ukzFI9rgwfU',
+                    url: '/videos/grade06/V04.mp4',
                     durationMinutes: 5,
                   },
                 },
@@ -631,7 +631,7 @@ model = DecisionTreeClassifier()
                   title: 'Supervised vs. Unsupervised vs. Reinforcement',
                   type: 'video',
                   data: {
-                    url: 'https://www.youtube.com/watch?v=1FZ0A1QCMWc',
+                    url: '/videos/grade06/V05.mp4',
                     durationMinutes: 10,
                   },
                 },
@@ -746,7 +746,7 @@ model = DecisionTreeClassifier()
           ],
         },
       ],
-    },,
+    },
 
     // ─────────────────────────────────────────────
     // CHAPTER 1
@@ -1368,7 +1368,7 @@ model = DecisionTreeClassifier()
           ],
         },
       ],
-    },,
+    },
 
     // ─────────────────────────────────────────────
     // CHAPTER 1
@@ -2087,6 +2087,32 @@ export const COURSE_LS_KEY = 'futureminds_course_data_v3';
 export const COURSE_LS_KEY_LEGACY = 'futureminds_course_data_v2';
 export const COURSE_LS_KEY_V1 = 'futureminds_course_data_v1';
 
+/** Apply local video mappings to any loaded courseData (including CMS localStorage data) */
+export function applyLocalVideoMappings(data) {
+  if (!data || !Array.isArray(data.chapters)) return data;
+  let g6SubIndex = 0;
+  for (const ch of data.chapters) {
+    if (!ch || typeof ch !== 'object') continue;
+    const grade = String(ch.grade || '6');
+    for (const u of ch.units || []) {
+      for (const s of u.subtopics || []) {
+        if (grade === '6') {
+          g6SubIndex++;
+          if (g6SubIndex <= 5) {
+            const vNum = String(g6SubIndex).padStart(2, '0');
+            for (const a of s.assets || []) {
+              if (a.type === 'video' && a.data) {
+                a.data.url = `/videos/grade06/V${vNum}.mp4`;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return data;
+}
+
 /** Load course data: initialize with default data on first load, persist CMS changes */
 export function loadCourseData() {
   try {
@@ -2096,6 +2122,8 @@ export function loadCourseData() {
       if (decompressed) {
         const parsed = JSON.parse(decompressed);
         if (parsed && Array.isArray(parsed.chapters) && parsed.chapters.length > 0) {
+          parsed.chapters = parsed.chapters.filter(Boolean);
+          applyLocalVideoMappings(parsed);
           return parsed;
         }
       }
@@ -2105,6 +2133,8 @@ export function loadCourseData() {
     if (rawLegacy) {
       const parsed = JSON.parse(rawLegacy);
       if (parsed && Array.isArray(parsed.chapters) && parsed.chapters.length > 0) {
+        parsed.chapters = parsed.chapters.filter(Boolean);
+        applyLocalVideoMappings(parsed);
         return parsed;
       }
     }

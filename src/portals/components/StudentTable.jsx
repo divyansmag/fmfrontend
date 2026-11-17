@@ -10,12 +10,16 @@ import defaultStudentAvatar from '../assets/avatars/default_student.png';
 
 
 export const StudentTable = ({ onSelectStudent }) => {
-  const { courseData } = useApp();
+  const { courseData, teacherClassCompleted } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All Students');
   const [selectedModule, setSelectedModule] = useState('All Modules');
   const [isModuleDropdownOpen, setIsModuleDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const classCompletedCount = Object.values(teacherClassCompleted || {}).filter(
+    (entry) => entry?.completed
+  ).length;
 
   const filteredStudents = studentsData.filter((student) => {
     const matchesSearch =
@@ -167,7 +171,9 @@ export const StudentTable = ({ onSelectStudent }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-[#27272f] text-xs sm:text-sm">
-            {filteredStudents.map((student) =>
+            {filteredStudents.map((student) => {
+            const dynamicProgress = Math.min(100, student.overallProgress + Math.min(8, Math.floor(classCompletedCount / 2)));
+            return (
             <tr key={student.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                 {/* Student Avatar + Name */}
                 <td className="py-4 px-6 font-semibold text-gray-900 dark:text-[#f5f5f5]">
@@ -179,9 +185,16 @@ export const StudentTable = ({ onSelectStudent }) => {
                       className="w-full h-full object-cover" />
                     
                     </div>
-                    <span className={student.nameColor || 'text-gray-900 dark:text-[#f5f5f5]'}>
-                      {student.name}
-                    </span>
+                    <div>
+                      <span className={student.nameColor || 'text-gray-900 dark:text-[#f5f5f5]'}>
+                        {student.name}
+                      </span>
+                      {classCompletedCount > 0 && (
+                        <span className="block text-[10px] font-bold text-[#15ab5d]">
+                          +{classCompletedCount} assets completed in class
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </td>
 
@@ -189,12 +202,12 @@ export const StudentTable = ({ onSelectStudent }) => {
                 <td className="py-4 px-6">
                   <div className="flex items-center space-x-3 max-w-[160px]">
                     <span className="font-bold text-gray-900 dark:text-[#f5f5f5] text-xs w-8">
-                      {student.overallProgress}%
+                      {dynamicProgress}%
                     </span>
                     <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
                       className={`h-full ${student.progressColor} rounded-full transition-all duration-300`}
-                      style={{ width: `${student.overallProgress}%` }} />
+                      style={{ width: `${dynamicProgress}%` }} />
                     
                     </div>
                   </div>
@@ -234,7 +247,8 @@ export const StudentTable = ({ onSelectStudent }) => {
                   </button>
                 </td>
               </tr>
-            )}
+            );
+            })}
           </tbody>
         </table>
       </div>

@@ -160,6 +160,7 @@ export default function VideoLesson() {
     markAssetComplete,
     toggleAssetComplete,
     getAssetCompleted,
+    teacherClassCompleted,
     getUnitProgress,
     navigateAdjacentAsset,
   } = useApp();
@@ -289,6 +290,12 @@ export default function VideoLesson() {
                   <span className="text-xs text-slate-400 font-medium truncate">
                     {currentChapter?.title} · {currentUnit?.title} · {currentSubtopic?.title}
                   </span>
+                  {teacherClassCompleted?.[currentAsset.id]?.completed && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      Completed in Class with Teacher
+                    </span>
+                  )}
                 </div>
                 <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display truncate">
                   {ASSET_META[currentAsset.type]?.label || currentAsset.type}

@@ -7,6 +7,8 @@ export const PORTAL_PAGES = {
   'teacher-progress': lazy(() => import('./pages/StudentProgressPage.jsx').then(m => ({ default: m.StudentProgressPage }))),
   'teacher-settings': lazy(() => import('./pages/TeacherSettingsPage.jsx').then(m => ({ default: m.TeacherSettingsPage }))),
   'teacher-lab-guide': lazy(() => import('./pages/TeacherLabGuidePage.jsx').then(m => ({ default: m.TeacherLabGuidePage }))),
+  'teacher-student-material': lazy(() => import('./pages/TeacherStudentMaterialPage.jsx').then(m => ({ default: m.TeacherStudentMaterialPage }))),
+  'teacher-content': lazy(() => import('./pages/TeacherContentPage.jsx').then(m => ({ default: m.TeacherContentPage }))),
   'parent-dashboard': lazy(() => import('./pages/parent/ParentDashboard.jsx').then(m => ({ default: m.ParentDashboard }))),
   'parent-progress': lazy(() => import('./pages/parent/ParentChildProgressPage.jsx').then(m => ({ default: m.ParentChildProgressPage }))),
   'parent-settings': lazy(() => import('./pages/parent/ParentSettingsPage.jsx').then(m => ({ default: m.ParentSettingsPage }))),

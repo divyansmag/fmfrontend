@@ -13,6 +13,8 @@ export const PATH_TO_VIEW = {
   '/teacher/student-progress': 'teacher-progress',
   '/teacher/settings': 'teacher-settings',
   '/teacher/lab-guide': 'teacher-lab-guide',
+  '/teacher/student-material': 'teacher-student-material',
+  '/teacher/teacher-content': 'teacher-content',
   '/parent/dashboard': 'parent-dashboard',
   '/parent/child-progress': 'parent-progress',
   '/parent/settings': 'parent-settings',

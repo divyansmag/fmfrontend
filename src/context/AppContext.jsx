@@ -127,11 +127,28 @@ export function AppProvider({ children }) {
   const [completedAssetIds, setCompletedAssetIds] = useState(() => {
     try {
       const raw = localStorage.getItem('futureminds_completed_assets_v1');
-      return raw ? new Set(JSON.parse(raw)) : new Set();
+      const teacherRaw = localStorage.getItem('futureminds_teacher_class_completed_v1');
+      const set = new Set();
+      if (raw) JSON.parse(raw).forEach((id) => set.add(id));
+      if (teacherRaw) {
+        const parsed = JSON.parse(teacherRaw);
+        Object.keys(parsed).forEach((id) => {
+          if (parsed[id]?.completed) set.add(id);
+        });
+      }
+      return set;
     } catch { return new Set(); }
   });
 
-  // ─── Persist completed assets ────────────────────────────────────────────
+  // Teacher Class-Completed Asset Metadata (tracks when & for which class/students teacher marked it complete)
+  const [teacherClassCompleted, setTeacherClassCompleted] = useState(() => {
+    try {
+      const raw = localStorage.getItem('futureminds_teacher_class_completed_v1');
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  });
+
+  // ─── Persist completed assets & sync across tabs/roles ───────────────────
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -140,6 +157,32 @@ export function AppProvider({ children }) {
       );
     } catch { /* ignore quota */ }
   }, [completedAssetIds]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'futureminds_teacher_class_completed_v1',
+        JSON.stringify(teacherClassCompleted)
+      );
+    } catch { /* ignore quota */ }
+  }, [teacherClassCompleted]);
+
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === 'futureminds_completed_assets_v1' && e.newValue) {
+        try {
+          setCompletedAssetIds(new Set(JSON.parse(e.newValue)));
+        } catch {}
+      }
+      if (e.key === 'futureminds_teacher_class_completed_v1' && e.newValue) {
+        try {
+          setTeacherClassCompleted(JSON.parse(e.newValue));
+        } catch {}
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   // ─── Derived course objects ───────────────────────────────────────────────
   const chapters = useMemo(() => {
@@ -484,6 +527,66 @@ export function AppProvider({ children }) {
     });
   }, [currentAssetId, showToast]);
 
+  /** Teacher marks or unmarks an asset (or array of assets) complete for students in class */
+  const markAssetsCompleteForClass = useCallback((assetIds, completed = true, options = {}) => {
+    const ids = Array.isArray(assetIds) ? assetIds : [assetIds];
+    if (!ids.length) return;
+
+    const targetScope = options.scope || 'Entire Class';
+    const studentIds = options.studentIds || 'all';
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    setCompletedAssetIds((prev) => {
+      const next = new Set(prev);
+      let newlyAdded = 0;
+      for (const id of ids) {
+        if (completed) {
+          if (!next.has(id)) newlyAdded++;
+          next.add(id);
+        } else {
+          next.delete(id);
+        }
+      }
+      if (newlyAdded > 0) {
+        setUser((prevUser) => ({ ...prevUser, xp: (prevUser.xp || 0) + newlyAdded * 20 }));
+      }
+      return next;
+    });
+
+    setTeacherClassCompleted((prev) => {
+      const next = { ...prev };
+      for (const id of ids) {
+        if (completed) {
+          next[id] = {
+            completed: true,
+            markedBy: 'Teacher (In-Class)',
+            scope: targetScope,
+            studentIds,
+            timestamp,
+          };
+        } else {
+          delete next[id];
+        }
+      }
+      return next;
+    });
+
+    const label = ids.length === 1 ? '1 asset' : `${ids.length} assets`;
+    if (completed) {
+      showToast(
+        'Marked Complete for Students!',
+        `Automatically synced ${label} as completed for ${targetScope}.`,
+        'success'
+      );
+    } else {
+      showToast(
+        'Completion Reset',
+        `Unmarked ${label} for ${targetScope}.`,
+        'info'
+      );
+    }
+  }, [showToast]);
+
   const redeemReward = useCallback((rewardType, cost) => {
     setUser((prev) => {
       if (prev.xp < cost) {
@@ -738,12 +841,14 @@ export function AppProvider({ children }) {
       selectedChapter,
       // ── Progress ──────────────────────────────────────
       completedAssetIds,
+      teacherClassCompleted,
       getAssetCompleted,
       getSubtopicProgress,
       getUnitProgress,
       getChapterProgress,
       markAssetComplete: markAssetCompleteFinal,
       toggleAssetComplete,
+      markAssetsCompleteForClass,
       // ── Navigation Actions ────────────────────────────
       navigateTo,
       navigateToAsset,
@@ -788,8 +893,8 @@ export function AppProvider({ children }) {
       currentChapterId, currentUnitId, currentSubtopicId, currentAssetId,
       currentChapter, currentUnit, currentSubtopic, currentAsset,
       selectedChapterId, selectedChapter,
-      completedAssetIds, getAssetCompleted, getSubtopicProgress, getUnitProgress, getChapterProgress,
-      markAssetCompleteFinal, toggleAssetComplete,
+      completedAssetIds, teacherClassCompleted, getAssetCompleted, getSubtopicProgress, getUnitProgress, getChapterProgress,
+      markAssetCompleteFinal, toggleAssetComplete, markAssetsCompleteForClass,
       navigateTo, navigateToAsset, navigateAdjacentAsset,
       showToast, setTheme, toggleTheme, updateProfile,
       handleLogin, loginAsRole, handleLogout, toggleSidebar, closeMobileSidebar,

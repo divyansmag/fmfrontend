@@ -10,7 +10,9 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  FlaskConical } from
+  FlaskConical,
+  MonitorPlay,
+  BookOpen } from
 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
@@ -40,6 +42,18 @@ export const Sidebar = () => {
     label: 'Dashboard',
     path: '/teacher/dashboard',
     icon: LayoutGrid
+  },
+  {
+    id: 'student-material',
+    label: 'Student Material',
+    path: '/teacher/student-material',
+    icon: MonitorPlay
+  },
+  {
+    id: 'teacher-content',
+    label: 'Teacher Content',
+    path: '/teacher/teacher-content',
+    icon: BookOpen
   },
   {
     id: 'assignments',

@@ -29,6 +29,8 @@ const PORTAL_VIEWS = new Set([
   'teacher-progress',
   'teacher-settings',
   'teacher-lab-guide',
+  'teacher-student-material',
+  'teacher-content',
   'parent-dashboard',
   'parent-progress',
   'parent-settings',
