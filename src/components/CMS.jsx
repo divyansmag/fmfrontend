@@ -290,92 +290,182 @@ function QuizForm({ data, onChange }) {
 }
 
 function MindmapForm({ data, onChange }) {
-  const fileInputRef = useRef(null);
+  const jsonInputRef = useRef(null);
+  const currentTree = data.tree || DEFAULT_AI_MINDMAP_TREE;
+  const [jsonText, setJsonText] = useState(() =>
+    JSON.stringify(currentTree, null, 2)
+  );
+  const [jsonError, setJsonError] = useState('');
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target.result;
-      onChange({
-        ...data,
-        html: content,
-        htmlFileName: file.name,
-        htmlFileSize: (file.size / 1024).toFixed(1) + ' KB',
-      });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+  // Count branches and leaf nodes for status pill
+  const countNodes = (node) => {
+    if (!node || typeof node !== 'object') return { branches: 0, leaves: 0 };
+    const topBranches = Array.isArray(node.children) ? node.children.length : 0;
+    let leaves = 0;
+    const walk = (n) => {
+      if (Array.isArray(n.children) && n.children.length > 0) {
+        n.children.forEach(walk);
+      } else {
+        leaves += 1;
       }
     };
-    reader.readAsText(file);
+    if (Array.isArray(node.children)) node.children.forEach(walk);
+    return { branches: topBranches, leaves };
   };
 
-  const removeHtml = () => {
-    const next = { ...data };
+  const stats = countNodes(currentTree);
+
+  const applyTreeObject = (parsedObj, fileName) => {
+    const next = { ...data, format: 'tree', tree: parsedObj };
+    if (fileName) next.jsonFileName = fileName;
+    // Remove any legacy raw HTML override so the AI_Mindmap_ST1 template renders the JSON
     delete next.html;
     delete next.htmlFileName;
     delete next.htmlFileSize;
     onChange(next);
+    setJsonText(JSON.stringify(parsedObj, null, 2));
+    setJsonError('');
+  };
+
+  const handleJsonUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        applyTreeObject(parsed, file.name);
+      } catch {
+        setJsonError('Invalid JSON file. Please check syntax and try again.');
+      }
+      if (jsonInputRef.current) jsonInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  const handleJsonTextChange = (raw) => {
+    setJsonText(raw);
+    try {
+      const parsed = JSON.parse(raw);
+      const next = { ...data, format: 'tree', tree: parsed };
+      delete next.html;
+      onChange(next);
+      setJsonError('');
+    } catch (err) {
+      setJsonError(err.message || 'Invalid JSON syntax');
+    }
+  };
+
+  const downloadJsonTemplate = () => {
+    const template = {
+      text: 'Artificial Intelligence (AI)',
+      sourceLabel: 'AI Foundations — Topic 1',
+      children: [
+        {
+          text: '1. What is AI?',
+          children: [
+            {
+              text: 'Simple Definition',
+              fact: 'Artificial Intelligence helps computers learn, understand information, and make decisions.',
+            },
+            {
+              text: 'Everyday AI',
+              fact: 'Voice assistants, Face Unlock, and video recommendations all use AI.',
+            },
+          ],
+        },
+        {
+          text: '2. Machine Learning',
+          children: [
+            {
+              text: 'Learning from Data',
+              fact: 'Instead of fixed rules, the computer finds patterns across many examples.',
+            },
+          ],
+        },
+      ],
+    };
+    const blob = new Blob([JSON.stringify(template, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mindmap_template.json';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="space-y-3">
-      {/* HTML Upload Section */}
-      <div className="p-3 rounded-2xl border border-teal-200 dark:border-teal-800 bg-teal-50/50 dark:bg-teal-950/20 space-y-2">
-        <div className="flex items-center justify-between">
+      {/* Built-in AI_Mindmap_ST1 Template Banner + JSON Upload */}
+      <div className="p-3.5 rounded-2xl border border-teal-200 dark:border-teal-800 bg-teal-50/50 dark:bg-teal-950/20 space-y-2.5">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-[10px] font-extrabold uppercase tracking-widest text-teal-700 dark:text-teal-300">
-            Custom HTML Upload (Required)
+            AI_Mindmap_ST1 Interactive Template (JSON Data Only)
           </label>
-          {data.html && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
-              HTML Active
-            </span>
-          )}
+          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+            {stats.branches} Branches · {stats.leaves} Topics
+          </span>
         </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Upload an .html file for this mindmap asset. The student viewer will render it in an isolated iframe.
+
+        <p className="text-xs text-slate-600 dark:text-slate-400">
+          The visual design, animations, pan/zoom, badges, sound effects, and confetti from{' '}
+          <code className="font-mono font-bold text-teal-700 dark:text-teal-300">AI_Mindmap_ST1.html</code>{' '}
+          are applied automatically. Just upload or paste your topic JSON below!
         </p>
 
-        {data.html ? (
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center gap-2 overflow-hidden">
-              <FileCode className="w-4 h-4 text-teal-600 flex-shrink-0" />
-              <div className="truncate">
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-                  {data.htmlFileName || 'custom-mindmap.html'}
-                </div>
-                <div className="text-[10px] text-slate-400">{data.htmlFileSize || `${(data.html.length / 1024).toFixed(1)} KB`}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button
-                type="button"
-                onClick={removeHtml}
-                className="px-2.5 py-1 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors"
-              >
-                Remove HTML
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".html,text/html"
-              className="hidden"
-              onChange={handleFileUpload}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 px-3 rounded-xl border-2 border-dashed border-teal-300 dark:border-teal-700 hover:border-teal-500 text-teal-600 dark:text-teal-400 text-xs font-bold flex items-center justify-center gap-2 transition-all bg-white dark:bg-slate-900 cursor-pointer"
-            >
-              <Upload className="w-3.5 h-3.5" /> Choose .html file to upload
-            </button>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <input
+            ref={jsonInputRef}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            onChange={handleJsonUpload}
+          />
+          <button
+            type="button"
+            onClick={() => jsonInputRef.current?.click()}
+            className="px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+          >
+            <Upload className="w-3.5 h-3.5" /> Upload Mindmap JSON
+          </button>
+
+          <button
+            type="button"
+            onClick={downloadJsonTemplate}
+            className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-teal-300 dark:border-teal-700 hover:bg-teal-50 dark:hover:bg-slate-800 text-teal-700 dark:text-teal-300 text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <FileCode className="w-3.5 h-3.5" /> Download JSON Template
+          </button>
+
+          <button
+            type="button"
+            onClick={() => applyTreeObject(DEFAULT_AI_MINDMAP_TREE, 'default-ai-mindmap.json')}
+            className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300 text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Load Full AI Sample
+          </button>
+        </div>
+      </div>
+
+      {/* Live JSON Editor */}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <label className={labelCls()}>Mindmap JSON Data (Edit or Paste directly)</label>
+          {jsonError ? (
+            <span className="text-[10px] font-bold text-rose-600">{jsonError}</span>
+          ) : (
+            <span className="text-[10px] font-bold text-emerald-600">✓ Valid JSON</span>
+          )}
+        </div>
+        <textarea
+          rows={10}
+          className={`${inputCls()} font-mono text-xs`}
+          value={jsonText}
+          onChange={(e) => handleJsonTextChange(e.target.value)}
+          placeholder='{"text": "Topic Title", "sourceLabel": "Subtitle", "children": [...]}'
+        />
       </div>
     </div>
   );
@@ -738,7 +828,9 @@ export default function CMS() {
   const startAddAsset = (type) => {
     setNewAssetType(type);
     setNewAssetTitle('');
-    setNewAssetData({});
+    setNewAssetData(
+      type === 'mindmap' ? { format: 'tree', tree: DEFAULT_AI_MINDMAP_TREE } : {}
+    );
   };
 
   const _patchAssets = (chId, uId, sId, patchFn) => {

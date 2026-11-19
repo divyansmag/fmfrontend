@@ -2,6 +2,8 @@
 // Structured just like the Student Course (Units -> Subtopics -> Multi-type Assets:
 // Video, Summary, Teaching Tips, Flashcards, Quiz)
 
+import { DEFAULT_AI_MINDMAP_TREE } from '../../data/courseData';
+
 export const TEACHER_TRAINING_COURSE = {
   id: 'teacher-course-1',
   number: '01',
@@ -82,6 +84,16 @@ Before stepping into the classroom, make sure you can clearly distinguish **Auto
                     fix: 'Remind students that AI calculates mathematical probabilities from data.',
                   },
                 ],
+              },
+            },
+            {
+              id: 'tc-u1-s1-mindmap',
+              type: 'mindmap',
+              title: 'Interactive Topic Mindmap (JSON Template)',
+              description: 'Interactive mindmap rendered automatically from JSON using the AI_Mindmap_ST1 design template.',
+              data: {
+                format: 'tree',
+                tree: DEFAULT_AI_MINDMAP_TREE,
               },
             },
             {

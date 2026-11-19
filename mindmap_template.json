@@ -1,0 +1,40 @@
+{
+  "text": "Artificial Intelligence (AI)",
+  "sourceLabel": "AI Foundations — Topic 1",
+  "children": [
+    {
+      "text": "1. What is AI?",
+      "children": [
+        {
+          "text": "Simple Definition",
+          "fact": "Artificial Intelligence, or AI, is technology that helps computers and machines learn, understand information, and make useful decisions in ways that can seem smart."
+        },
+        {
+          "text": "Everyday AI",
+          "fact": "You already use AI in daily life. Siri and Alexa answer questions, phones can unlock using your face, and apps recommend movies, videos, songs, or products."
+        },
+        {
+          "text": "Machine Learning",
+          "fact": "Machine Learning is one important area of AI. It helps computers learn patterns from examples and data instead of following only fixed rules."
+        }
+      ]
+    },
+    {
+      "text": "2. AI vs ML vs DL",
+      "children": [
+        {
+          "text": "Artificial Intelligence",
+          "fact": "AI is the biggest area. Its goal is to help machines perform tasks that normally need human-like intelligence."
+        },
+        {
+          "text": "Machine Learning",
+          "fact": "Machine Learning, or ML, is a part of AI. A computer learns from data and examples instead of being told every single rule."
+        },
+        {
+          "text": "Deep Learning",
+          "fact": "Deep Learning, or DL, is a part of Machine Learning. It uses neural networks to learn difficult patterns, such as faces, voices, and speech."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "text": "Artificial Intelligence (AI)",
+  "sourceLabel": "Grade 8 AI Guide",
+  "children": [
+    {
+      "text": "1. What is AI?",
+      "children": [
+        {
+          "text": "Simple Definition",
+          "fact": "Artificial Intelligence, or AI, is technology that helps computers and machines learn, understand information, and make useful decisions in ways that can seem smart."
+        },
+        {
+          "text": "Everyday AI",
+          "fact": "You already use AI in daily life. Siri and Alexa answer questions, phones can unlock using your face, and apps recommend movies, videos, songs, or products."
+        },
+        {
+          "text": "Machine Learning",
+          "fact": "Machine Learning is one important area of AI. It helps computers learn patterns from examples and data instead of following only fixed rules."
+        },
+        {
+          "text": "Deep Learning",
+          "fact": "Deep Learning is a type of Machine Learning that can learn more complicated patterns. It is often used for things like recognizing faces and understanding speech."
+        },
+        {
+          "text": "Language & Vision",
+          "fact": "AI can work with language and pictures. Natural Language Processing helps computers understand words, while Computer Vision helps them understand images and video."
+        },
+        {
+          "text": "Chatbot Example",
+          "fact": "A chatbot uses AI to understand your question, find patterns in language, and create a useful answer."
+        }
+      ]
+    },
+    {
+      "text": "2. AI vs ML vs DL",
+      "children": [
+        {
+          "text": "Artificial Intelligence",
+          "fact": "AI is the biggest area. Its goal is to help machines perform tasks that normally need human-like intelligence, such as understanding, deciding, or solving problems."
+        },
+        {
+          "text": "Machine Learning",
+          "fact": "Machine Learning, or ML, is a part of AI. A computer learns from data and examples instead of being told every single rule."
+        },
+        {
+          "text": "Deep Learning",
+          "fact": "Deep Learning, or DL, is a part of Machine Learning. It uses neural networks to learn difficult patterns, such as faces, voices, and speech."
+        },
+        {
+          "text": "Tree Example",
+          "fact": "Think of AI as a big tree. Machine Learning is one branch of that tree, and Deep Learning is a smaller branch growing from Machine Learning."
+        }
+      ]
+    },
+    {
+      "text": "3. AI Through Time",
+      "children": [
+        {
+          "text": "1950s: AI Begins",
+          "fact": "In the mid-1950s, scientists began studying intelligent machines seriously. The term “Artificial Intelligence” became famous after the Dartmouth Conference."
+        },
+        {
+          "text": "Early Rule-Based AI",
+          "fact": "Early AI systems followed strict rules written by people. They could solve certain problems, but they could not easily learn from new examples."
+        },
+        {
+          "text": "AI Winters",
+          "fact": "AI progress slowed during periods called “AI winters.” Computers were not powerful enough, and there was not enough data to train smarter systems."
+        },
+        {
+          "text": "Machine Learning Era",
+          "fact": "As computers became faster and more data became available, Machine Learning helped AI improve by learning patterns from examples."
+        },
+        {
+          "text": "Deep Learning Era",
+          "fact": "Deep Learning later made AI much better at difficult tasks such as recognizing images, understanding speech, and finding complex patterns."
+        },
+        {
+          "text": "Generative AI",
+          "fact": "Today, Generative AI can create new content such as text, images, and music by learning patterns from large amounts of data."
+        },
+        {
+          "text": "Deep Blue, 1997",
+          "fact": "In 1997, IBM’s Deep Blue defeated the world chess champion. It showed how powerful AI can be when it is designed for one specific task."
+        }
+      ]
+    },
+    {
+      "text": "4. AI in Real Life",
+      "children": [
+        {
+          "text": "Healthcare",
+          "fact": "AI can help doctors study medical scans and notice patterns that may point to a health problem. Important decisions still need human medical experts."
+        },
+        {
+          "text": "Finance",
+          "fact": "Banks can use AI to look for unusual transaction patterns that may be signs of fraud or mistakes."
+        },
+        {
+          "text": "Education",
+          "fact": "Learning apps can use AI to adjust lessons or practice questions based on a student’s speed, level, and progress."
+        },
+        {
+          "text": "Shopping & Entertainment",
+          "fact": "Online stores and entertainment apps use AI to recommend products, movies, songs, and videos that you may enjoy."
+        },
+        {
+          "text": "Transport",
+          "fact": "AI can help plan faster routes by studying traffic information. It is also used in some technologies that support self-driving vehicles."
+        },
+        {
+          "text": "Google Maps Example",
+          "fact": "When Google Maps suggests a faster route after checking traffic from many vehicles, AI is helping study the information and compare possible routes."
+        }
+      ]
+    },
+    {
+      "text": "5. Ethics & Limits",
+      "children": [
+        {
+          "text": "AI Is Not Magic",
+          "fact": "AI can be powerful, but it is not perfect or magical. It works by finding patterns in data and can still make mistakes."
+        },
+        {
+          "text": "Biased Data",
+          "fact": "If an AI system learns from incomplete or unfair data, its answers or decisions can also become unfair."
+        },
+        {
+          "text": "No Human Understanding",
+          "fact": "AI does not truly understand emotions, meaning, or consequences the way people do. It recognizes patterns and produces results based on what it learned."
+        },
+        {
+          "text": "Human Checking",
+          "fact": "People should check important AI decisions, especially in areas such as healthcare, hiring, and education, where mistakes can affect someone’s life."
+        },
+        {
+          "text": "Privacy & Fairness",
+          "fact": "Using AI responsibly means protecting people’s private information, treating people fairly, and deciding who is responsible when something goes wrong."
+        },
+        {
+          "text": "Accent Example",
+          "fact": "A voice assistant trained mostly on one accent may struggle with other accents. This happens because of the training data, not because some accents are better than others."
+        }
+      ]
+    }
+  ]
+}

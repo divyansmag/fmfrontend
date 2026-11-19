@@ -42,12 +42,55 @@ export function outlineToMindmapTree(outline, fallbackTitle = 'Mindmap') {
 }
 
 /**
+ * Normalizes any JSON node shape ({ text|title|name|topic, fact|description|summary|detail, children|branches|subtopics|items })
+ * into the { text, fact, sourceLabel, children } structure expected by AI_Mindmap_ST1.
+ */
+export function normalizeMindmapNode(raw, fallbackTitle = 'Mindmap') {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    return {
+      text: fallbackTitle,
+      children: raw.map((item, idx) => normalizeMindmapNode(item, `Topic ${idx + 1}`)).filter(Boolean),
+    };
+  }
+  if (typeof raw === 'string') {
+    return { text: raw, fact: raw };
+  }
+  if (typeof raw !== 'object') return null;
+
+  const text = raw.text || raw.title || raw.name || raw.topic || raw.label || fallbackTitle;
+  const fact = raw.fact || raw.description || raw.summary || raw.detail || raw.explanation || undefined;
+  const sourceLabel = raw.sourceLabel || raw.subtitle || raw.source || undefined;
+  const rawChildren = raw.children || raw.branches || raw.subtopics || raw.topics || raw.items || null;
+
+  const node = { text };
+  if (fact) node.fact = fact;
+  if (sourceLabel) node.sourceLabel = sourceLabel;
+  if (Array.isArray(rawChildren) && rawChildren.length > 0) {
+    node.children = rawChildren
+      .map((child, idx) => normalizeMindmapNode(child, `Subtopic ${idx + 1}`))
+      .filter(Boolean);
+  }
+  return node;
+}
+
+/**
  * Resolve mindmap data to a valid tree
  */
 export function resolveMindmapTree(data, fallbackTitle = 'Mindmap') {
   if (!data) return DEFAULT_AI_MINDMAP_TREE;
-  if (data.tree && typeof data.tree === 'object' && data.tree.text) {
-    return data.tree;
+  if (data.tree && typeof data.tree === 'object') {
+    const normalized = normalizeMindmapNode(data.tree, fallbackTitle);
+    if (normalized) return normalized;
+  }
+  if (data.json && typeof data.json === 'string') {
+    try {
+      const parsed = JSON.parse(data.json);
+      const normalized = normalizeMindmapNode(parsed, fallbackTitle);
+      if (normalized) return normalized;
+    } catch {
+      /* fall through */
+    }
   }
   if (data.outline) {
     const parsed = outlineToMindmapTree(data.outline, fallbackTitle);
